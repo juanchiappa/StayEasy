@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="StayEasy.BE/StayEasy.BE.csproj" />
+  <Project Path="StayEasy.BLL/StayEasy.BLL.csproj" />
+  <Project Path="StayEasy.DAL/StayEasy.DAL.csproj" />
+  <Project Path="StayEasy.MPP/StayEasy.MPP.csproj" />
+  <Project Path="StayEasy.UI/StayEasy.UI.csproj" />
+</Solution>
