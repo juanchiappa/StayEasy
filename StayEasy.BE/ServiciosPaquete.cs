@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StayEasy.BE
 {
-    internal class serviciosPaquete
+    public class serviciosPaquete
     {
         public serviciosPaquete(int iD_Servicio, char nombre, decimal precio, bool esCombo)
         {

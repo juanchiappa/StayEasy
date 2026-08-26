@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StayEasy.BE
 {
-    internal class Habitacion
+    public class Habitacion
     {
         public Habitacion(int iD_habitacion, int numero, char tipoHabitacion, decimal precioBase, char nivelDeServicio, char estado)
         {

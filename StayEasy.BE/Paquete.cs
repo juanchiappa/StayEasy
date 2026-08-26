@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StayEasy.BE
 {
-    internal class Paquete
+    public class Paquete
     {
         public Paquete(global::System.Int32 iD_Paquete, global::System.Int32 iD_Servicio)
         {

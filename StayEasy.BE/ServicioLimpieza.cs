@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StayEasy.BE
 {
-    internal class ServicioLimpieza
+    public class ServicioLimpieza
     {   
     }
 }

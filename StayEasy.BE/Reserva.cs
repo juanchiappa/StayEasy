@@ -6,7 +6,7 @@ namespace StayEasy.BE
 {
     internal class Reserva
     {
-        public Reserva(int iD_Reserva, Huesped iD_Huesped, Habitacion habitacion, Datetime fechaCheckIn, Datetime fechaChekOut, decimal total)
+        public Reserva(int iD_Reserva, Huesped iD_Huesped, Habitacion habitacion, DateTime fechaCheckIn, DateTime fechaChekOut, decimal total)
         {
             ID_Reserva = iD_Reserva;
             ID_Huesped = iD_Huesped;
@@ -19,8 +19,8 @@ namespace StayEasy.BE
         public int ID_Reserva { get; set; }
         public Huesped  ID_Huesped { get; set; }
         public Habitacion Habitacion { get; set; }
-        public Datetime FechaCheckIn { get; set; }
-        public Datetime FechaChekOut { get; set; }
+        public DateTime FechaCheckIn { get; set; }
+        public DateTime FechaChekOut { get; set; }
         public decimal Total { get; set; }
 
 

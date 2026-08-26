@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StayEasy.BE
 {
-    internal class Huesped
+    public class Huesped
     {
         public Huesped(int iD_Huesped, char nombre, int dNI)
         {
