@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StayEasy.BE
 {
-    internal class Reserva
+    public class Reserva
     {
         public Reserva(int iD_Reserva, Huesped iD_Huesped, Habitacion habitacion, DateTime fechaCheckIn, DateTime fechaChekOut, EstadoReserva estado, decimal total)
         {

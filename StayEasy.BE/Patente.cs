@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StayEasy.BE
 {
-    internal class Patente
+    public class Patente
     {
         public Patente(int patenteID, string nombre, string descripcion, bool esFamilia)
         {
