@@ -4,7 +4,7 @@ using System.Text;
 
 namespace StayEasy.BE
 {
-    public class Habitacion
+    public class Habitacion 
     {
         public Habitacion(int iD_habitacion, int numero, char tipoHabitacion, decimal precioBase, char nivelDeServicio, char estado)
         {
@@ -15,6 +15,8 @@ namespace StayEasy.BE
             NivelDeServicio = nivelDeServicio;
             Estado = estado;
         }
+        protected Habitacion() { }
+
 
         public int ID_habitacion { get; set; }
         public int Numero { get; set; }

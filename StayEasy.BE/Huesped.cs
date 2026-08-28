@@ -4,18 +4,24 @@ using System.Text;
 
 namespace StayEasy.BE
 {
-    public class Huesped
+    public class Huesped 
     {
-        public Huesped(int iD_Huesped, char nombre, int dNI)
+        public Huesped(int huespedID, string nombre, string apellido, int dNI, string email, string telefono)
         {
-            ID_Huesped = iD_Huesped;
+            HuespedID = huespedID;
             Nombre = nombre;
+            Apellido = apellido;
             DNI = dNI;
+            Email = email;
+            Telefono = telefono;
         }
 
-        public int ID_Huesped { get; set; }
-        public char Nombre { get; set; }
+        public int HuespedID { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
         public int DNI { get; set; }
+        public string Email { get; set; }
+        public string Telefono { get; set; }
 
     }
 }
