@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StayEasy.BE\StayEasy.BE.csproj" />
+    <ProjectReference Include="..\StayEasy.MPP\StayEasy.MPP.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

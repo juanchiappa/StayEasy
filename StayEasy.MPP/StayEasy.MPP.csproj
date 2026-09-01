@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\StayEasy.BE\StayEasy.BE.csproj" />
   </ItemGroup>
 
