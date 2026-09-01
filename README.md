@@ -38,7 +38,7 @@ StayEasy gestiona el ciclo de vida completo de una reserva hotelera:
 Arquitectura multicapa estricta, separada en 5 proyectos independientes dentro de la misma solución:
 
 ```
-UI (WinForms MDI)  →  BLL  →  DAL  →  MPP  →  BE
+UI (WPF)  →  BLL  →  DAL  →  MPP  →  BE
                                 ↓
                           SQL Server (StayEasyDB)
 ```
@@ -94,7 +94,7 @@ StayEasy/
 |---|---|
 | Juan Chiappa | Base de Datos, MPP, DAL |
 | Liam Leguizamon | BLL, UI |
-| Leandro Tabares | BLL, DAL |
+| Leandro Tabares | BLL, BE |
 
 ## Estado del proyecto
 
