@@ -1,12 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\StayEasy.DAL\StayEasy.DAL.csproj" />
-    <ProjectReference Include="..\StayEasy.BE\StayEasy.BE.csproj" />
+    <Compile Remove="Gestores\**" />
+    <EmbeddedResource Remove="Gestores\**" />
+    <None Remove="Gestores\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Gestores\" />
+    <ProjectReference Include="..\StayEasy.DAL\StayEasy.DAL.csproj" />
+    <ProjectReference Include="..\StayEasy.BE\StayEasy.BE.csproj" />
+    <ProjectReference Include="..\StayEasy.Seguridad\StayEasy.Seguridad.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -11,7 +11,9 @@ namespace StayEasy.DAL.Infraestructura
 
         protected RepositorioBase()
         {
-            _conexion = ConexionBD.ObtenerConexion();
+            // Instancia la conexión leyendo el App.config de la UI
+            string cadena = ConfigurationManager.ConnectionStrings["StayEasyDB"].ConnectionString;
+            _conexion = new SqlConnection(cadena);
         }
 
         public void Dispose()
@@ -19,9 +21,8 @@ namespace StayEasy.DAL.Infraestructura
             if (_conexion != null)
             {
                 if (_conexion.State == System.Data.ConnectionState.Open)
-                {
                     _conexion.Close();
-                }
+
                 _conexion.Dispose();
             }
         }

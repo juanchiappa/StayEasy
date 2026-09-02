@@ -10,6 +10,10 @@
     <ProjectReference Include="..\StayEasy.MPP\StayEasy.MPP.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Reservas\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

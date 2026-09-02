@@ -5,20 +5,10 @@ using System.Text;
 
 namespace StayEasy.DAL.Infraestructura
 {
-    internal class DataAccessException : Exception
+    public class DataAccessException : Exception
     {
-        public DataAccessException()
-        {
-
-        }
-
-        public DataAccessException(string mensaje) : base(mensaje)
-        {
-
-        }
-
-        public DataAccessException(string mensaje, Exception innerException) : base(mensaje, innerException)
-        {
-        }
+        public DataAccessException() { }
+        public DataAccessException(string message) : base(message) { }
+        public DataAccessException(string message, Exception innerException) : base(message, innerException) { }
     }
 }
