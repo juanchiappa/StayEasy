@@ -211,15 +211,22 @@ BEGIN
 
     IF @UsuarioID IS NULL OR @HashAlmacenado <> @PasswordHash OR @Activo = 0
     BEGIN
-        INSERT INTO SesionUsuario (UsuarioID, Exitoso, DireccionIP) VALUES (@UsuarioID, 0, @DireccionIP);
+        -- SOLO guardamos el registro de sesión si el usuario EXISTE (evita el error NULL)
+        IF @UsuarioID IS NOT NULL
+        BEGIN
+            INSERT INTO SesionUsuario (UsuarioID, Exitoso, DireccionIP) VALUES (@UsuarioID, 0, @DireccionIP);
+        END
+        
         INSERT INTO Bitacora (UsuarioID, Criticidad, Accion, Descripcion)
-        VALUES (@UsuarioID, 'Alta', 'LOGIN_FALLIDO', 'Intento de inicio de sesion fallido.');
+        VALUES (@UsuarioID, 'Alta', 'LOGIN_FALLIDO', 'Intento de inicio de sesion fallido desde IP: ' + @DireccionIP);
+        
         THROW 52000, 'Usuario o contrasena invalidos, o usuario inactivo.', 1;
     END
 
     UPDATE Usuario SET UltimoLogin = GETDATE() WHERE UsuarioID = @UsuarioID;
 
     INSERT INTO SesionUsuario (UsuarioID, Exitoso, DireccionIP) VALUES (@UsuarioID, 1, @DireccionIP);
+    
     INSERT INTO Bitacora (UsuarioID, Criticidad, Accion, Descripcion)
     VALUES (@UsuarioID, 'Baja', 'LOGIN', 'Inicio de sesion exitoso.');
 
@@ -293,7 +300,7 @@ BEGIN
         UPDATE Reserva SET Estado = 'Finalizada' WHERE ID_Reserva = @ReservaID;
         UPDATE Habitacion SET Estado = 'D' WHERE ID_habitacion = @HabitacionID;
 
-        -- Genera la alerta mediante patrón Observer (RF-08)[cite: 1, 11]
+        -- Genera la alerta mediante patrón Observer
         INSERT INTO ServicioLimpieza (HabitacionID, Prioridad) VALUES (@HabitacionID, 'Normal');
 
         INSERT INTO Bitacora (UsuarioID, Criticidad, Accion, Descripcion)
