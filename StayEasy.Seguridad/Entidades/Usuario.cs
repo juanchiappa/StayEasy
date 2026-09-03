@@ -12,7 +12,7 @@ namespace StayEasy.Seguridad.Entidades
         public string NombreCompleto { get; set; }
         public string Email { get; set; }
         public string IdiomaPreferido { get; set; }
-        //public PermisoBase Permisos { get; set; } // Enlace con el Composite
+        public PermisoBase Permisos { get; set; } // Enlace con el Composite
 
         public Usuario(int id, string usuario, byte[] hash, string nombre, string email)
         {

@@ -3,6 +3,6 @@
   <Project Path="StayEasy.BLL/StayEasy.BLL.csproj" />
   <Project Path="StayEasy.DAL/StayEasy.DAL.csproj" />
   <Project Path="StayEasy.MPP/StayEasy.MPP.csproj" />
-  <Project Path="StayEasy.Seguridad/StayEasy.Seguridad.csproj" Id="d98d5976-00b4-4714-86c2-28e99e210b95" />
+  <Project Path="StayEasy.Seguridad/StayEasy.Seguridad.csproj" Id="e2edec93-33db-48dc-913f-eb550e14d5a6" />
   <Project Path="StayEasy.UI/StayEasy.UI.csproj" />
 </Solution>
