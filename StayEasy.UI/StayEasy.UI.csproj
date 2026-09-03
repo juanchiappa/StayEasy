@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\StayEasy.BLL\StayEasy.BLL.csproj" />
     <ProjectReference Include="..\StayEasy.BE\StayEasy.BE.csproj" />
+    <ProjectReference Include="..\StayEasy.Seguridad\StayEasy.Seguridad.csproj" />
   </ItemGroup>
 
   <ItemGroup>

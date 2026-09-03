@@ -25,6 +25,7 @@ namespace StayEasy.Seguridad
                     comando.CommandType = CommandType.StoredProcedure;
                     comando.Parameters.AddWithValue("@NombreUsuario", nombreUsuario);
                     comando.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                    comando.Parameters.AddWithValue("@DireccionIP", "127.0.0.1");
 
                     try
                     {
@@ -45,7 +46,12 @@ namespace StayEasy.Seguridad
                     }
                     catch (SqlException ex)
                     {
-                        throw new Exception("Error al intentar conectar con la base de datos de seguridad.", ex);
+                        if (ex.Number == 52000)
+                        {
+                            throw new UnauthorizedAccessException("Usuario o contraseña incorrectos.");
+                        }
+
+                        throw new Exception($"Error de base de datos: {ex.Message}", ex);
                     }
                 }
             }
