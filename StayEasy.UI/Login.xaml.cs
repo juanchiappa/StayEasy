@@ -18,7 +18,7 @@ using MessageBoxImage = System.Windows.MessageBoxImage;
 
 namespace StayEasy.UI
 {
-    public partial class Login : FluentWindow
+    public partial class Login : Window
     {
         private readonly UsuarioSeguridadBLL _seguridadBLL = new UsuarioSeguridadBLL();
 
@@ -31,7 +31,7 @@ namespace StayEasy.UI
         {
             // 1. Capturamos los datos
             string usuario = Txt_Usuario.Text;
-            string password = Txt_Password.Password; // WPF PasswordBox usa .Password
+            string password = Txt_PasswordVisible.Text; 
 
             try
             {
@@ -53,7 +53,7 @@ namespace StayEasy.UI
             {
                 // Atrapamos la excepción específica de credenciales incorrectas
                 MessageBox.Show(ex.Message, "Error de Acceso", MessageBoxButton.OK, MessageBoxImage.Warning);
-                Txt_Password.Clear(); // Limpiamos la clave para que vuelva a intentar
+                Txt_PasswordVisible.Clear(); // Limpiamos la clave para que vuelva a intentar
             }
             catch (ArgumentException ex)
             {
