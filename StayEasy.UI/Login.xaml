@@ -396,7 +396,7 @@
 
                 <!-- ========== Formulario ========== -->
                 <Border Grid.Column="2" Background="{StaticResource Login.Brush.Card}"
-                        CornerRadius="24" Padding="44,48">
+        CornerRadius="24" Padding="44,48">
                     <StackPanel VerticalAlignment="Center">
 
                         <TextBlock Text="¡Bienvenido de nuevo!" Style="{StaticResource Login.Text.Heading}" />
@@ -468,8 +468,8 @@
 
                         <!-- Acción primaria -->
                         <Button x:Name="Btn_IniciarSesion" Content="Iniciar sesión"
-                                Style="{StaticResource Login.Button.Primary}"
-                                Margin="0,26,0,0" IsDefault="True" TabIndex="5" />
+                        Style="{StaticResource Login.Button.Primary}"
+                        Margin="0,26,0,0" IsDefault="True" TabIndex="5" />
 
                         <!-- Separador "o continuá con" -->
                         <Grid Margin="0,14,0,0">

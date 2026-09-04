@@ -104,6 +104,7 @@
         </Style>
 
         <!-- ================= Botones ================= -->
+        <!-- BOTÓN PRINCIPAL CON CAMBIO DE COLOR DRAMÁTICO -->
         <Style x:Key="Rg.Button.Primary" TargetType="Button">
             <Setter Property="Height" Value="52" />
             <Setter Property="FontSize" Value="15" />
@@ -114,8 +115,14 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="26">
-                            <ContentPresenter x:Name="Cp" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border x:Name="Bd" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="26"
+                                BorderBrush="#E0E0E0"
+                                BorderThickness="0">
+                            <ContentPresenter x:Name="Cp" 
+                                            HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -124,12 +131,12 @@
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="Bd" Property="Background" Value="{StaticResource Rg.Pressed}" />
                             </Trigger>
-                            <!-- Deshabilitado: el mockup lo muestra gris plano,
-                                 no translúcido. -->
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Rg.Disabled}" />
-                                <Setter Property="Foreground" Value="{StaticResource Rg.TextFaint}" />
-                                <Setter Property="Cursor" Value="No" />
+                                <Setter TargetName="Bd" Property="Background" Value="#F0F0F0" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#E0E0E0" />
+                                <Setter TargetName="Bd" Property="BorderThickness" Value="1" />
+                                <Setter Property="Foreground" Value="#B0B0B0" />
+                                <Setter Property="Cursor" Value="Arrow" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -436,7 +443,8 @@
 
                 <!-- ==================== Formulario ==================== -->
                 <Border Grid.Column="2" Background="{StaticResource Rg.Card}" CornerRadius="24" Padding="40,40,40,34">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                  Padding="0,0,14,0">
                         <StackPanel>
 
                             <TextBlock Text="Registrate" Style="{StaticResource Rg.Heading}" />
