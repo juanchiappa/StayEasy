@@ -1,0 +1,1173 @@
+﻿<Window x:Class="StayEasy.UI.Dashboard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="StayEasy"
+        Width="1440" Height="900"
+        MinWidth="1180" MinHeight="760"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI Variable Text, Segoe UI"
+        Background="#E6E6E6">
+
+    <!-- Dashboard (shell + pantalla de inicio), maqueta monocroma.
+         Paleta local en Window.Resources, igual que Login.xaml: el shell no
+         consume StayEasy.Tokens para que el contraste del panel oscuro no
+         dependa del tema de la app. -->
+
+    <Window.Resources>
+
+        <!-- ================= Paleta ================= -->
+        <SolidColorBrush x:Key="Db.Bg"          Color="#E6E6E6" />
+        <SolidColorBrush x:Key="Db.Card"        Color="#FFFFFF" />
+        <SolidColorBrush x:Key="Db.Dark"        Color="#1C1C1C" />
+        <SolidColorBrush x:Key="Db.DarkHover"   Color="#000000" />
+        <SolidColorBrush x:Key="Db.DarkTile"    Color="#262626" />
+        <SolidColorBrush x:Key="Db.DarkBorder"  Color="#333333" />
+        <SolidColorBrush x:Key="Db.DarkTrack"   Color="#3A3A3A" />
+        <SolidColorBrush x:Key="Db.OnDark"      Color="#FFFFFF" />
+        <SolidColorBrush x:Key="Db.OnDarkMuted" Color="#9A9A9A" />
+        <SolidColorBrush x:Key="Db.Text"        Color="#1A1A1A" />
+        <SolidColorBrush x:Key="Db.TextBody"    Color="#3D3D3D" />
+        <SolidColorBrush x:Key="Db.TextMuted"   Color="#8A8A8A" />
+        <SolidColorBrush x:Key="Db.TextFaint"   Color="#A3A3A3" />
+        <SolidColorBrush x:Key="Db.Hairline"    Color="#F2F2F2" />
+        <SolidColorBrush x:Key="Db.RowLine"     Color="#F7F7F7" />
+        <SolidColorBrush x:Key="Db.Sunken"      Color="#F4F4F4" />
+        <SolidColorBrush x:Key="Db.Hover"       Color="#F2F2F2" />
+        <SolidColorBrush x:Key="Db.Track"       Color="#F0F0F0" />
+        <SolidColorBrush x:Key="Db.Border"      Color="#E0E0E0" />
+        <SolidColorBrush x:Key="Db.Mid"         Color="#8F8F8F" />
+
+        <!-- ================= Tipografía ================= -->
+        <Style x:Key="Db.PageTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="28" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource Db.Text}" />
+        </Style>
+        <Style x:Key="Db.PageSubtitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13.5" />
+            <Setter Property="Foreground" Value="{StaticResource Db.TextMuted}" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+        <Style x:Key="Db.CardTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15.5" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource Db.Text}" />
+        </Style>
+        <Style x:Key="Db.CardCaption" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{StaticResource Db.TextFaint}" />
+            <Setter Property="Margin" Value="0,3,0,0" />
+        </Style>
+        <Style x:Key="Db.GroupLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10.5" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#A8A8A8" />
+            <Setter Property="Margin" Value="10,0,10,8" />
+            <!-- El mockup usa mayúsculas + tracking; en WPF el texto ya va escrito
+                 en mayúsculas y el tracking se aproxima con este espaciado. -->
+        </Style>
+        <Style x:Key="Db.Metric" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource Db.OnDark}" />
+        </Style>
+        <Style x:Key="Db.MetricCaption" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11.5" />
+            <Setter Property="Foreground" Value="{StaticResource Db.OnDarkMuted}" />
+            <Setter Property="Margin" Value="0,3,0,0" />
+        </Style>
+
+        <!-- ================= Tarjetas ================= -->
+        <Style x:Key="Db.Card.Light" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource Db.Card}" />
+            <Setter Property="CornerRadius" Value="24" />
+            <Setter Property="Padding" Value="26,24" />
+        </Style>
+        <Style x:Key="Db.Card.Dark" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource Db.Dark}" />
+            <Setter Property="CornerRadius" Value="24" />
+            <Setter Property="Padding" Value="28,26" />
+        </Style>
+        <Style x:Key="Db.Tile.Dark" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource Db.DarkTile}" />
+            <Setter Property="BorderBrush" Value="{StaticResource Db.DarkBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="Padding" Value="16,14" />
+        </Style>
+
+        <!-- ================= Navegación ================= -->
+        <!-- Un RadioButton por pestaña, agrupados por GroupName: el grupo da
+             la exclusividad y IsChecked el estado activo. El code-behind
+             escucha Checked y cambia el contenido de Host_Contenido. -->
+        <Style x:Key="Db.NavItem" TargetType="RadioButton">
+            <Setter Property="GroupName" Value="Nav" />
+            <Setter Property="Height" Value="38" />
+            <Setter Property="FontSize" Value="13.5" />
+            <Setter Property="Foreground" Value="{StaticResource Db.TextBody}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,0,0,2" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="12" Padding="10,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="18" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- El icono se pasa como Tag (Geometry) desde cada item -->
+                                <Path Grid.Column="0" x:Name="Ic" Width="17" Height="17" Stretch="Uniform"
+                                      Data="{TemplateBinding Tag}"
+                                      Stroke="{TemplateBinding Foreground}" StrokeThickness="1.6"
+                                      StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                      Fill="Transparent"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                                <TextBlock Grid.Column="1" x:Name="Tx" Text="{TemplateBinding Content}"
+                                           Margin="11,0,0,0" VerticalAlignment="Center"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           TextTrimming="CharacterEllipsis" />
+
+                                <!-- La columna 2 queda reservada para el badge de pendientes,
+                                     que se superpone desde afuera (ver Nav_Reservas). -->
+                                <Border Grid.Column="2" MinWidth="26" Background="Transparent" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Db.Hover}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Db.Dark}" />
+                                <Setter TargetName="Tx" Property="Foreground" Value="{StaticResource Db.OnDark}" />
+                                <Setter TargetName="Tx" Property="FontWeight" Value="Medium" />
+                                <Setter TargetName="Ic" Property="Stroke" Value="{StaticResource Db.OnDark}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Db.Dark}" />
+                                <Setter TargetName="Bd" Property="BorderThickness" Value="1" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Badge suelto, para los items que llevan contador -->
+        <Style x:Key="Db.NavBadge" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource Db.Track}" />
+            <Setter Property="CornerRadius" Value="9" />
+            <Setter Property="Padding" Value="7,1" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="Db.NavBadgeText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#5C5C5C" />
+        </Style>
+
+        <!-- ================= Botones ================= -->
+        <Style x:Key="Db.Button.Pill" TargetType="Button">
+            <Setter Property="Height" Value="42" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Foreground" Value="{StaticResource Db.OnDark}" />
+            <Setter Property="Background" Value="{StaticResource Db.Dark}" />
+            <Setter Property="Padding" Value="20,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="21"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Db.DarkHover}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#3A3A3A" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Db.Button.Round" TargetType="Button">
+            <Setter Property="Width" Value="42" />
+            <Setter Property="Height" Value="42" />
+            <Setter Property="Background" Value="{StaticResource Db.Card}" />
+            <Setter Property="Foreground" Value="{StaticResource Db.Dark}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="21">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#F6F6F6" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Acción de fila: primaria (negra) y secundaria (borde) -->
+        <Style x:Key="Db.Button.RowPrimary" TargetType="Button">
+            <Setter Property="Height" Value="32" />
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Foreground" Value="{StaticResource Db.OnDark}" />
+            <Setter Property="Background" Value="{StaticResource Db.Dark}" />
+            <Setter Property="Padding" Value="15,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="16"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Db.DarkHover}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Db.Button.RowGhost" TargetType="Button" BasedOn="{StaticResource Db.Button.RowPrimary}">
+            <Setter Property="Foreground" Value="{StaticResource Db.Text}" />
+            <Setter Property="Background" Value="{StaticResource Db.Card}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="16"
+                                BorderBrush="{StaticResource Db.Border}" BorderThickness="1"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Db.Sunken}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Db.Button.Link" TargetType="Button">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#5C5C5C" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock x:Name="Tx" Text="{TemplateBinding Content}"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   FontSize="{TemplateBinding FontSize}" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Tx" Property="Foreground" Value="{StaticResource Db.Dark}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Tabs del bloque de movimientos: segmentado dentro de una píldora gris -->
+        <Style x:Key="Db.SegTab" TargetType="RadioButton">
+            <Setter Property="GroupName" Value="Movimientos" />
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Foreground" Value="{StaticResource Db.TextMuted}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="16" Padding="15,7">
+                            <TextBlock x:Name="Tx" Text="{TemplateBinding Content}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontSize="{TemplateBinding FontSize}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource Db.Card}" />
+                                <Setter TargetName="Tx" Property="Foreground" Value="{StaticResource Db.Text}" />
+                                <Setter TargetName="Tx" Property="FontWeight" Value="Medium" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Tx" Property="Foreground" Value="{StaticResource Db.Text}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ================= Chips de estado ================= -->
+        <Style x:Key="Db.Chip" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource Db.Hover}" />
+            <Setter Property="CornerRadius" Value="11" />
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+        <Style x:Key="Db.ChipText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11.5" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Foreground" Value="#5C5C5C" />
+        </Style>
+        <!-- Chip de atención: relleno negro, texto blanco -->
+        <Style x:Key="Db.Chip.Strong" TargetType="Border" BasedOn="{StaticResource Db.Chip}">
+            <Setter Property="Background" Value="{StaticResource Db.Dark}" />
+        </Style>
+        <Style x:Key="Db.ChipText.Strong" TargetType="TextBlock" BasedOn="{StaticResource Db.ChipText}">
+            <Setter Property="Foreground" Value="{StaticResource Db.OnDark}" />
+        </Style>
+
+        <!-- Avatar circular con iniciales -->
+        <Style x:Key="Db.Avatar" TargetType="Border">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="Background" Value="{StaticResource Db.Track}" />
+        </Style>
+        <Style x:Key="Db.AvatarText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11.5" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#5C5C5C" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <!-- Encabezado de columna de la lista de movimientos -->
+        <Style x:Key="Db.ColHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#B0B0B0" />
+        </Style>
+
+    </Window.Resources>
+
+    <!-- ===================================================================
+         Layout: sidebar fija + zona principal con scroll
+         =================================================================== -->
+    <Grid Background="{StaticResource Db.Bg}" ClipToBounds="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Blobs del fondo (el mockup usa gradientes radiales difusos) -->
+        <Ellipse Grid.ColumnSpan="2" Width="820" Height="820" Margin="0,-320,180,0"
+                 HorizontalAlignment="Right" VerticalAlignment="Top" IsHitTestVisible="False">
+            <Ellipse.Fill>
+                <RadialGradientBrush RadiusX="0.55" RadiusY="0.55">
+                    <GradientStop Color="#FFFFFFFF" Offset="0" />
+                    <GradientStop Color="#00FFFFFF" Offset="1" />
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+        <Ellipse Grid.ColumnSpan="2" Width="700" Height="700" Margin="0,0,-160,-300"
+                 HorizontalAlignment="Right" VerticalAlignment="Bottom" IsHitTestVisible="False">
+            <Ellipse.Fill>
+                <RadialGradientBrush RadiusX="0.6" RadiusY="0.6">
+                    <GradientStop Color="#FFD2D2D2" Offset="0" />
+                    <GradientStop Color="#00D2D2D2" Offset="1" />
+                </RadialGradientBrush>
+            </Ellipse.Fill>
+        </Ellipse>
+
+        <!-- ==================== Sidebar ==================== -->
+        <Border Grid.Column="0" Width="248" Margin="16,16,0,16"
+                Background="{StaticResource Db.Card}" CornerRadius="24" Padding="18,26">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000" Opacity="0.06" BlurRadius="40" ShadowDepth="10" Direction="270" />
+            </Border.Effect>
+
+            <DockPanel>
+
+                <!-- Marca -->
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="8,0,8,26">
+                    <Border Width="32" Height="32" CornerRadius="10" Background="{StaticResource Db.Dark}">
+                        <TextBlock Text="S" FontSize="14" FontWeight="Bold"
+                                   Foreground="{StaticResource Db.OnDark}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="StayEasy" Margin="10,0,0,0" FontSize="17" FontWeight="SemiBold"
+                               Foreground="{StaticResource Db.Text}" VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Usuario del turno (abajo) -->
+                <Border DockPanel.Dock="Bottom" Margin="0,18,0,0" Padding="0,16,0,0"
+                        BorderBrush="{StaticResource Db.Track}" BorderThickness="0,1,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="34" Height="34" CornerRadius="17" Background="#E4E4E4">
+                            <TextBlock Text="MR" FontSize="12" FontWeight="SemiBold" Foreground="#5C5C5C"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock x:Name="Lbl_UsuarioNombre" Text="Marina Ríos" FontSize="13" FontWeight="Medium"
+                                       Foreground="{StaticResource Db.Text}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock x:Name="Lbl_UsuarioRol" Text="Recepción" FontSize="11.5"
+                                       Foreground="{StaticResource Db.TextFaint}" />
+                        </StackPanel>
+                        <Button x:Name="Btn_Configuracion" Grid.Column="2" Width="30" Height="30"
+                                Style="{StaticResource Db.Button.Round}" ToolTip="Configuración"
+                                Background="Transparent" VerticalAlignment="Center">
+                            <Path Width="16" Height="16" Stretch="Uniform" Fill="Transparent"
+                                  Stroke="{StaticResource Db.TextMuted}" StrokeThickness="1.7"
+                                  Data="M15,12 A3,3 0 1 1 9,12 A3,3 0 1 1 15,12 Z M12,3 L13.2,3.6 L13.6,5.6 L15.4,6.4 L17.2,5.6 L19,7.4 L18.2,9.2 L19,11 L21,11.4 L21,13.4 L19,13.8 L18.2,15.6 L19,17.4 L17.2,19.2 L15.4,18.4 L13.6,19.2 L13.2,21 L11.2,21 L10.8,19.2 L9,18.4 L7.2,19.2 L5.4,17.4 L6.2,15.6 L5.4,13.8 L3.4,13.4 L3.4,11.4 L5.4,11 L6.2,9.2 L5.4,7.4 L7.2,5.6 L9,6.4 L10.8,5.6 L11.2,3.6 Z" />
+                        </Button>
+                    </Grid>
+                </Border>
+
+                <!-- Pestañas -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+
+                        <!-- ================= Operación ================= -->
+                        <TextBlock Text="OPERACIÓN" Style="{StaticResource Db.GroupLabel}" />
+
+                        <RadioButton x:Name="Nav_Inicio" Content="Inicio" IsChecked="True"
+                                     Style="{StaticResource Db.NavItem}"
+                                     Tag="M4,11.5 L12,4 L20,11.5 M6,10.5 L6,20 L18,20 L18,10.5" />
+
+                        <Grid>
+                            <RadioButton x:Name="Nav_Reservas" Content="Reservas"
+                                         Style="{StaticResource Db.NavItem}"
+                                         Tag="M4,5 L20,5 L20,20 L4,20 Z M8,3 L8,7 M16,3 L16,7 M4,10 L20,10" />
+                            <Border Style="{StaticResource Db.NavBadge}" Margin="0,0,10,2" HorizontalAlignment="Right"
+                                    IsHitTestVisible="False">
+                                <TextBlock x:Name="Lbl_BadgeReservas" Text="9" Style="{StaticResource Db.NavBadgeText}" />
+                            </Border>
+                        </Grid>
+
+                        <Grid>
+                            <RadioButton x:Name="Nav_CheckIn" Content="Check-in"
+                                         Style="{StaticResource Db.NavItem}"
+                                         Tag="M10,4 L5,4 L5,20 L10,20 M14,12 L21,12 M18,8.5 L21.5,12 L18,15.5" />
+                            <Border Style="{StaticResource Db.NavBadge}" Margin="0,0,10,2" HorizontalAlignment="Right"
+                                    IsHitTestVisible="False">
+                                <TextBlock x:Name="Lbl_BadgeCheckIn" Text="14" Style="{StaticResource Db.NavBadgeText}" />
+                            </Border>
+                        </Grid>
+
+                        <Grid>
+                            <RadioButton x:Name="Nav_CheckOut" Content="Check-out"
+                                         Style="{StaticResource Db.NavItem}"
+                                         Tag="M14,4 L19,4 L19,20 L14,20 M10,12 L3,12 M6.5,8.5 L3,12 L6.5,15.5" />
+                            <Border Style="{StaticResource Db.NavBadge}" Margin="0,0,10,2" HorizontalAlignment="Right"
+                                    IsHitTestVisible="False">
+                                <TextBlock x:Name="Lbl_BadgeCheckOut" Text="11" Style="{StaticResource Db.NavBadgeText}" />
+                            </Border>
+                        </Grid>
+
+                        <!-- ================= Alojamiento ================= -->
+                        <TextBlock Text="ALOJAMIENTO" Style="{StaticResource Db.GroupLabel}" Margin="10,24,10,8" />
+
+                        <RadioButton x:Name="Nav_Tablero" Content="Tablero de habitaciones"
+                                     Style="{StaticResource Db.NavItem}"
+                                     Tag="M4,4 L11,4 L11,11 L4,11 Z M13,4 L20,4 L20,11 L13,11 Z M4,13 L11,13 L11,20 L4,20 Z M13,13 L20,13 L20,20 L13,20 Z" />
+
+                        <RadioButton x:Name="Nav_Habitaciones" Content="Habitaciones"
+                                     Style="{StaticResource Db.NavItem}"
+                                     Tag="M3,20 L21,20 M5,20 L5,8 L12,4 L19,8 L19,20 M10,20 L10,15 L14,15 L14,20" />
+
+                        <Grid>
+                            <RadioButton x:Name="Nav_Limpieza" Content="Panel de limpieza"
+                                         Style="{StaticResource Db.NavItem}"
+                                         Tag="M9,4 L15,4 L16,10 L8,10 Z M12,10 L12,20 M8,16 L16,16" />
+                            <Border Style="{StaticResource Db.NavBadge}" Margin="0,0,10,2" HorizontalAlignment="Right"
+                                    IsHitTestVisible="False">
+                                <TextBlock x:Name="Lbl_BadgeLimpieza" Text="6" Style="{StaticResource Db.NavBadgeText}" />
+                            </Border>
+                        </Grid>
+
+                        <!-- ================= Comercial ================= -->
+                        <TextBlock Text="COMERCIAL" Style="{StaticResource Db.GroupLabel}" Margin="10,24,10,8" />
+
+                        <RadioButton x:Name="Nav_Servicios" Content="Servicios y paquetes"
+                                     Style="{StaticResource Db.NavItem}"
+                                     Tag="M6,4 L6,20 M6,8 L12,8 M6,16 L12,16 M12,8 L18,8 M12,16 L18,16" />
+
+                        <RadioButton x:Name="Nav_Consumos" Content="Consumos"
+                                     Style="{StaticResource Db.NavItem}"
+                                     Tag="M4,6 L20,6 L20,18 L4,18 Z M4,10 L20,10 M8,14 L12,14" />
+
+                        <RadioButton x:Name="Nav_Huespedes" Content="Huéspedes"
+                                     Style="{StaticResource Db.NavItem}"
+                                     Tag="M15.5,7.5 A3.5,3.5 0 1 1 8.5,7.5 A3.5,3.5 0 1 1 15.5,7.5 Z M5,20 C5,16.5 8.1,14 12,14 C15.9,14 19,16.5 19,20" />
+
+                        <!-- ================= Administración ================= -->
+                        <TextBlock Text="ADMINISTRACIÓN" Style="{StaticResource Db.GroupLabel}" Margin="10,24,10,8" />
+
+                        <RadioButton x:Name="Nav_Reportes" Content="Reportes"
+                                     Style="{StaticResource Db.NavItem}"
+                                     Tag="M5,20 L5,10 M11,20 L11,4 M17,20 L17,13 M3,20 L21,20" />
+
+                        <RadioButton x:Name="Nav_Usuarios" Content="Usuarios y permisos"
+                                     Style="{StaticResource Db.NavItem}"
+                                     Tag="M13,8 A3,3 0 1 1 7,8 A3,3 0 1 1 13,8 Z M4,20 C4,16.8 6.7,14.5 10,14.5 M17,8.5 L17,13.5 M14.5,11 L19.5,11" />
+
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+
+        <!-- ================= Zona principal ================= -->
+        <DockPanel Grid.Column="1" Margin="16" LastChildFill="True">
+
+            <!-- ================= Encabezado ================= -->
+            <Grid DockPanel.Dock="Top" Margin="4,6,2,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="200" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock x:Name="Lbl_Titulo" Text="Hola, Marina" Style="{StaticResource Db.PageTitle}" />
+                    <TextBlock x:Name="Lbl_Subtitulo"
+                               Text="Miércoles 3 de septiembre · 25 movimientos previstos para hoy"
+                               Style="{StaticResource Db.PageSubtitle}" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+
+                    <!-- Búsqueda global -->
+                    <Border Height="42" MinWidth="320" MaxWidth="420" CornerRadius="21" Padding="16,0"
+                            Background="{StaticResource Db.Card}" VerticalAlignment="Center">
+                        <Border.Effect>
+                            <DropShadowEffect Color="#000000" Opacity="0.05" BlurRadius="24" ShadowDepth="6" Direction="270" />
+                        </Border.Effect>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Path Grid.Column="0" Width="15" Height="15" Stretch="Uniform" Fill="Transparent"
+                                  Stroke="{StaticResource Db.TextFaint}" StrokeThickness="2"
+                                  VerticalAlignment="Center"
+                                  Data="M18,11 A7,7 0 1 1 4,11 A7,7 0 1 1 18,11 Z M16.5,16.5 L20,20" />
+                            <Grid Grid.Column="1" Margin="8,0">
+                                <TextBlock x:Name="Ph_Buscar" Text="Buscar reserva, huésped o habitación"
+                                           FontSize="13.5" Foreground="{StaticResource Db.TextFaint}"
+                                           VerticalAlignment="Center" IsHitTestVisible="False" />
+                                <TextBox x:Name="Txt_Buscar" BorderThickness="0" Background="Transparent"
+                                         FontSize="13.5" Foreground="{StaticResource Db.Text}"
+                                         VerticalContentAlignment="Center"
+                                         CaretBrush="{StaticResource Db.Text}" />
+                            </Grid>
+                            <Border Grid.Column="2" CornerRadius="5" Padding="5,1"
+                                    BorderBrush="#E8E8E8" BorderThickness="1" VerticalAlignment="Center">
+                                <TextBlock Text="Ctrl K" FontSize="11" Foreground="#C4C4C4" />
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <Button x:Name="Btn_NuevaReserva" Style="{StaticResource Db.Button.Pill}" Margin="8,0,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Width="14" Height="14" Stretch="Uniform" Fill="Transparent"
+                                  Stroke="{StaticResource Db.OnDark}" StrokeThickness="2.4"
+                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                  Data="M12,5 L12,19 M5,12 L19,12" VerticalAlignment="Center" />
+                            <TextBlock Text="Nueva reserva" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="Btn_Notificaciones" Style="{StaticResource Db.Button.Round}" Margin="8,0,0,0"
+                            ToolTip="Notificaciones">
+                        <Grid Width="42" Height="42">
+                            <Path Width="17" Height="17" Stretch="Uniform" Fill="Transparent"
+                                  Stroke="{StaticResource Db.Dark}" StrokeThickness="1.7"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  Data="M18,8 A6,6 0 1 0 6,8 C6,15 3,16 3,16 L21,16 C21,16 18,15 18,8 M10.3,21 A2,2 0 0 0 13.7,21" />
+                            <Ellipse x:Name="Dot_Notificaciones" Width="7" Height="7" Fill="{StaticResource Db.Dark}"
+                                     Stroke="{StaticResource Db.Card}" StrokeThickness="2"
+                                     HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,9,10,0" />
+                        </Grid>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- ================= Contenido de la pestaña =================
+                 Host_Contenido es el punto de intercambio: el code-behind
+                 reemplaza su Content por la vista de cada pestaña. Acá viene
+                 cargado con la pantalla de inicio. -->
+            <ContentControl x:Name="Host_Contenido">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                              Padding="0,0,4,0">
+                    <StackPanel x:Name="Pnl_Inicio">
+
+                        <!-- ============ Fila 1 ============ -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.25*" MinWidth="300" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" MinWidth="280" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" MinWidth="280" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- ================= Estado del hotel (tarjeta oscura) ================= -->
+                            <Border Grid.Column="0" Style="{StaticResource Db.Card.Dark}">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="Estado del hotel" FontSize="16" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource Db.OnDark}" />
+                                            <TextBlock x:Name="Lbl_EstadoFecha"
+                                                       Text="Miércoles 3 de septiembre · 09:41"
+                                                       FontSize="12" Foreground="{StaticResource Db.Mid}"
+                                                       Margin="0,3,0,0" />
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="{StaticResource Db.OnDark}"
+                                                CornerRadius="11" Padding="10,4" VerticalAlignment="Top">
+                                            <TextBlock Text="En vivo" FontSize="11" FontWeight="Medium"
+                                                       Foreground="{StaticResource Db.Dark}" />
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Ocupación -->
+                                    <Grid Margin="0,22,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock x:Name="Lbl_Ocupacion" Text="78%" FontSize="52"
+                                                       FontWeight="SemiBold" Foreground="{StaticResource Db.OnDark}"
+                                                       LineHeight="52" />
+                                            <TextBlock Text="Ocupación" FontSize="12"
+                                                       Foreground="{StaticResource Db.OnDarkMuted}" Margin="0,6,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Margin="28,0,0,4" VerticalAlignment="Bottom">
+                                            <!-- Barra: el code-behind fija el Width del relleno o usa
+                                                 un ProgressBar; acá va como Grid de dos columnas. -->
+                                            <Border Height="6" CornerRadius="3" Background="{StaticResource Db.DarkTrack}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="78*" />
+                                                        <ColumnDefinition Width="22*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border x:Name="Bar_Ocupacion" Grid.Column="0" CornerRadius="3"
+                                                            Background="{StaticResource Db.OnDark}" />
+                                                </Grid>
+                                            </Border>
+                                            <Grid Margin="0,8,0,0">
+                                                <TextBlock x:Name="Lbl_OcupacionDetalle" Text="22 de 28 habitaciones"
+                                                           FontSize="11.5" Foreground="{StaticResource Db.Mid}"
+                                                           HorizontalAlignment="Left" />
+                                                <TextBlock x:Name="Lbl_OcupacionDelta" Text="+4 vs. ayer"
+                                                           FontSize="11.5" Foreground="{StaticResource Db.Mid}"
+                                                           HorizontalAlignment="Right" />
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- Tres métricas -->
+                                    <Grid Margin="0,22,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" Style="{StaticResource Db.Tile.Dark}">
+                                            <StackPanel>
+                                                <TextBlock x:Name="Lbl_CheckInHoy" Text="14" Style="{StaticResource Db.Metric}" />
+                                                <TextBlock Text="Check-in hoy" Style="{StaticResource Db.MetricCaption}" />
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Grid.Column="2" Style="{StaticResource Db.Tile.Dark}">
+                                            <StackPanel>
+                                                <TextBlock x:Name="Lbl_CheckOutHoy" Text="11" Style="{StaticResource Db.Metric}" />
+                                                <TextBlock Text="Check-out hoy" Style="{StaticResource Db.MetricCaption}" />
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Grid.Column="4" Style="{StaticResource Db.Tile.Dark}">
+                                            <StackPanel>
+                                                <TextBlock x:Name="Lbl_FueraServicio" Text="3" Style="{StaticResource Db.Metric}" />
+                                                <TextBlock Text="Fuera de servicio" Style="{StaticResource Db.MetricCaption}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- ================= Ocupación semanal ================= -->
+                            <Border Grid.Column="2" Style="{StaticResource Db.Card.Light}">
+                                <DockPanel>
+                                    <Grid DockPanel.Dock="Top">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="Ocupación semanal" Style="{StaticResource Db.CardTitle}" />
+                                            <TextBlock Text="Últimos 7 días" Style="{StaticResource Db.CardCaption}" />
+                                        </StackPanel>
+                                        <Border Grid.Column="1" Background="{StaticResource Db.Dark}" CornerRadius="10"
+                                                Padding="9,4" VerticalAlignment="Top">
+                                            <TextBlock x:Name="Lbl_DeltaSemana" Text="+6%" FontSize="11"
+                                                       FontWeight="Medium" Foreground="{StaticResource Db.OnDark}" />
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Leyenda (abajo) -->
+                                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,16,0,0">
+                                        <Rectangle Width="14" Height="2" RadiusX="1" RadiusY="1"
+                                                   Fill="{StaticResource Db.Dark}" VerticalAlignment="Center" />
+                                        <TextBlock Text="Esta semana" Margin="6,0,16,0" FontSize="11.5"
+                                                   Foreground="{StaticResource Db.TextMuted}" VerticalAlignment="Center" />
+                                        <Rectangle Width="14" Height="2" RadiusX="1" RadiusY="1"
+                                                   Fill="#C9C9C9" VerticalAlignment="Center" />
+                                        <TextBlock Text="Anterior" Margin="6,0,0,0" FontSize="11.5"
+                                                   Foreground="{StaticResource Db.TextMuted}" VerticalAlignment="Center" />
+                                    </StackPanel>
+
+                                    <!-- Días -->
+                                    <Grid DockPanel.Dock="Bottom" Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="J" FontSize="11.5" Foreground="#B0B0B0" />
+                                        <TextBlock Grid.Column="1" Text="V" FontSize="11.5" Foreground="#B0B0B0" />
+                                        <TextBlock Grid.Column="2" Text="S" FontSize="11.5" Foreground="#B0B0B0" />
+                                        <TextBlock Grid.Column="3" Text="D" FontSize="11.5" Foreground="#B0B0B0" />
+                                        <TextBlock Grid.Column="4" Text="L" FontSize="11.5" Foreground="#B0B0B0" />
+                                        <TextBlock Grid.Column="5" Text="M" FontSize="11.5" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource Db.Dark}" />
+                                        <TextBlock Grid.Column="6" Text="M" FontSize="11.5" Foreground="#B0B0B0" />
+                                    </Grid>
+
+                                    <!-- Serie: Polyline sobre un Viewbox para que escale con la tarjeta.
+                                         El code-behind reemplaza Points con los datos reales. -->
+                                    <Viewbox Stretch="Fill" MinHeight="130" Margin="0,16,0,0">
+                                        <Canvas Width="300" Height="130">
+                                            <Polyline x:Name="Serie_Anterior"
+                                                      Points="0,108 34,101 68,98 100,88 134,80 166,88 198,92 232,82 264,72 300,76"
+                                                      Stroke="#C9C9C9" StrokeThickness="2.2"
+                                                      StrokeDashArray="2.5 2.5" StrokeLineJoin="Round" />
+                                            <Polyline x:Name="Serie_Actual"
+                                                      Points="0,92 33,74 66,70 99,80 132,88 165,52 198,30 231,44 262,50 300,34"
+                                                      Stroke="{StaticResource Db.Dark}" StrokeThickness="2.4"
+                                                      StrokeLineJoin="Round" StrokeStartLineCap="Round"
+                                                      StrokeEndLineCap="Round" />
+                                            <Ellipse Canvas.Left="194" Canvas.Top="26" Width="8" Height="8"
+                                                     Fill="{StaticResource Db.Dark}" />
+                                        </Canvas>
+                                    </Viewbox>
+                                </DockPanel>
+                            </Border>
+
+                            <!-- ================= Ingresos del mes ================= -->
+                            <Border Grid.Column="4" Style="{StaticResource Db.Card.Light}">
+                                <DockPanel>
+                                    <StackPanel DockPanel.Dock="Top">
+                                        <TextBlock Text="Ingresos del mes" Style="{StaticResource Db.CardTitle}" />
+                                        <TextBlock Text="Septiembre · a la fecha" Style="{StaticResource Db.CardCaption}" />
+                                    </StackPanel>
+
+                                    <Grid Margin="0,18,0,0" VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Donut: dos Ellipse con StrokeDashArray (en unidades de
+                                             StrokeThickness) y rotación -90° para arrancar arriba.
+                                             Anillo externo 65%, interno 40%. -->
+                                        <Grid Grid.Column="0" Width="118" Height="118">
+                                            <Ellipse Width="100" Height="100" Stroke="{StaticResource Db.Track}"
+                                                     StrokeThickness="13" />
+                                            <Ellipse x:Name="Ring_Alojamiento" Width="100" Height="100"
+                                                     Stroke="{StaticResource Db.Dark}" StrokeThickness="13"
+                                                     StrokeDashArray="15.7 24.2" StrokeDashCap="Round"
+                                                     RenderTransformOrigin="0.5,0.5">
+                                                <Ellipse.RenderTransform>
+                                                    <RotateTransform Angle="-90" />
+                                                </Ellipse.RenderTransform>
+                                            </Ellipse>
+                                            <Ellipse Width="70" Height="70" Stroke="#F6F6F6" StrokeThickness="9" />
+                                            <Ellipse x:Name="Ring_Consumos" Width="70" Height="70"
+                                                     Stroke="{StaticResource Db.Mid}" StrokeThickness="9"
+                                                     StrokeDashArray="9.8 24.4" StrokeDashCap="Round"
+                                                     RenderTransformOrigin="0.5,0.5">
+                                                <Ellipse.RenderTransform>
+                                                    <RotateTransform Angle="-90" />
+                                                </Ellipse.RenderTransform>
+                                            </Ellipse>
+                                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock x:Name="Lbl_Objetivo" Text="65%" FontSize="20"
+                                                           FontWeight="SemiBold" Foreground="{StaticResource Db.Text}"
+                                                           HorizontalAlignment="Center" />
+                                                <TextBlock Text="del objetivo" FontSize="10.5"
+                                                           Foreground="{StaticResource Db.TextFaint}"
+                                                           HorizontalAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock x:Name="Lbl_Facturado" Text="$4.812.000" FontSize="22"
+                                                       FontWeight="SemiBold" Foreground="{StaticResource Db.Text}" />
+                                            <TextBlock Text="Facturado" FontSize="11.5"
+                                                       Foreground="{StaticResource Db.TextFaint}" Margin="0,2,0,12" />
+
+                                            <Grid Margin="0,0,0,7">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Ellipse Grid.Column="0" Width="8" Height="8"
+                                                         Fill="{StaticResource Db.Dark}" VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="1" Text="Alojamiento" Margin="8,0,0,0"
+                                                           FontSize="12" Foreground="#5C5C5C" />
+                                                <TextBlock Grid.Column="2" x:Name="Lbl_Alojamiento" Text="$3.9M"
+                                                           FontSize="12" FontWeight="Medium"
+                                                           Foreground="{StaticResource Db.Text}" />
+                                            </Grid>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Ellipse Grid.Column="0" Width="8" Height="8"
+                                                         Fill="{StaticResource Db.Mid}" VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="1" Text="Consumos" Margin="8,0,0,0"
+                                                           FontSize="12" Foreground="#5C5C5C" />
+                                                <TextBlock Grid.Column="2" x:Name="Lbl_Consumos" Text="$0.9M"
+                                                           FontSize="12" FontWeight="Medium"
+                                                           Foreground="{StaticResource Db.Text}" />
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+                                </DockPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- ============ Fila 2 ============ -->
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.55*" MinWidth="420" />
+                                <ColumnDefinition Width="16" />
+                                <ColumnDefinition Width="*" MinWidth="300" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- ================= Movimientos de hoy ================= -->
+                            <Border Grid.Column="0" Background="{StaticResource Db.Card}" CornerRadius="24"
+                                    Padding="0,24,0,8" VerticalAlignment="Top">
+                                <StackPanel>
+
+                                    <Grid Margin="26,0,26,18">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" MinWidth="180" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="Movimientos de hoy" Style="{StaticResource Db.CardTitle}" />
+                                            <TextBlock x:Name="Lbl_MovimientosResumen" Text="14 llegadas · 11 salidas"
+                                                       Style="{StaticResource Db.CardCaption}" />
+                                        </StackPanel>
+                                        <!-- Segmentado Llegadas / Salidas / En casa -->
+                                        <Border Grid.Column="1" Background="{StaticResource Db.Sunken}"
+                                                CornerRadius="19" Padding="3" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal">
+                                                <RadioButton x:Name="Tab_Llegadas" Content="Llegadas" IsChecked="True"
+                                                             Style="{StaticResource Db.SegTab}" />
+                                                <RadioButton x:Name="Tab_Salidas" Content="Salidas"
+                                                             Style="{StaticResource Db.SegTab}" />
+                                                <RadioButton x:Name="Tab_EnCasa" Content="En casa"
+                                                             Style="{StaticResource Db.SegTab}" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Encabezado de columnas -->
+                                    <Border Padding="26,0,26,10" BorderBrush="{StaticResource Db.Hairline}"
+                                            BorderThickness="0,0,0,1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="1.6*" />
+                                                <ColumnDefinition Width="0.8*" />
+                                                <ColumnDefinition Width="1*" />
+                                                <ColumnDefinition Width="0.9*" />
+                                                <ColumnDefinition Width="Auto" MinWidth="120" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="HUÉSPED" Style="{StaticResource Db.ColHeader}" />
+                                            <TextBlock Grid.Column="1" Text="HAB." Style="{StaticResource Db.ColHeader}" />
+                                            <TextBlock Grid.Column="2" Text="ESTADÍA" Style="{StaticResource Db.ColHeader}" />
+                                            <TextBlock Grid.Column="3" Text="ESTADO" Style="{StaticResource Db.ColHeader}" />
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Filas.
+                                         Items_Movimientos espera una colección con
+                                         Iniciales, Huesped, Reserva, Habitacion, Estadia,
+                                         Estado, Accion, EsAccionPrimaria, EsEstadoFuerte.
+                                         El segmentado de arriba cambia el ItemsSource. -->
+                                    <ItemsControl x:Name="Items_Movimientos">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Padding="26,13" BorderBrush="{StaticResource Db.RowLine}"
+                                                        BorderThickness="0,0,0,1" Background="Transparent">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="1.6*" />
+                                                            <ColumnDefinition Width="0.8*" />
+                                                            <ColumnDefinition Width="1*" />
+                                                            <ColumnDefinition Width="0.9*" />
+                                                            <ColumnDefinition Width="Auto" MinWidth="120" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <!-- Huésped -->
+                                                        <Grid Grid.Column="0">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <Border Grid.Column="0" Style="{StaticResource Db.Avatar}">
+                                                                <TextBlock Text="{Binding Iniciales}"
+                                                                           Style="{StaticResource Db.AvatarText}" />
+                                                            </Border>
+                                                            <StackPanel Grid.Column="1" Margin="11,0,8,0"
+                                                                        VerticalAlignment="Center">
+                                                                <TextBlock Text="{Binding Huesped}" FontSize="13.5"
+                                                                           FontWeight="Medium"
+                                                                           Foreground="{StaticResource Db.Text}"
+                                                                           TextTrimming="CharacterEllipsis" />
+                                                                <TextBlock Text="{Binding Reserva}" FontSize="11.5"
+                                                                           Foreground="{StaticResource Db.TextFaint}" />
+                                                            </StackPanel>
+                                                        </Grid>
+
+                                                        <TextBlock Grid.Column="1" Text="{Binding Habitacion}"
+                                                                   FontSize="13.5" FontWeight="Medium"
+                                                                   Foreground="{StaticResource Db.Text}"
+                                                                   VerticalAlignment="Center" />
+
+                                                        <TextBlock Grid.Column="2" Text="{Binding Estadia}"
+                                                                   FontSize="12.5" Foreground="#5C5C5C"
+                                                                   VerticalAlignment="Center" />
+
+                                                        <!-- Chip de estado. El estilo fuerte (negro) se aplica
+                                                             desde el code-behind según EsEstadoFuerte. -->
+                                                        <Border Grid.Column="3" Style="{StaticResource Db.Chip}"
+                                                                VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Estado}"
+                                                                       Style="{StaticResource Db.ChipText}" />
+                                                        </Border>
+
+                                                        <Button Grid.Column="4" Content="{Binding Accion}"
+                                                                Style="{StaticResource Db.Button.RowPrimary}"
+                                                                HorizontalAlignment="Right" VerticalAlignment="Center" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <Button x:Name="Btn_VerMovimientos" Content="Ver todos los movimientos"
+                                            Style="{StaticResource Db.Button.Link}"
+                                            HorizontalAlignment="Center" Margin="0,16,0,12" />
+                                </StackPanel>
+                            </Border>
+
+                            <!-- ================= Columna derecha ================= -->
+                            <StackPanel Grid.Column="2">
+
+                                <!-- Limpieza -->
+                                <Border Style="{StaticResource Db.Card.Light}">
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="Limpieza" Style="{StaticResource Db.CardTitle}" />
+                                                <TextBlock x:Name="Lbl_LimpiezaResumen" Text="18 de 24 tareas cerradas"
+                                                           Style="{StaticResource Db.CardCaption}" />
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1" x:Name="Lbl_LimpiezaPct" Text="75%" FontSize="20"
+                                                       FontWeight="SemiBold" Foreground="{StaticResource Db.Text}"
+                                                       VerticalAlignment="Center" />
+                                        </Grid>
+
+                                        <Border Height="6" CornerRadius="3" Background="{StaticResource Db.Track}"
+                                                Margin="0,16,0,0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="75*" />
+                                                    <ColumnDefinition Width="25*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Border x:Name="Bar_Limpieza" Grid.Column="0" CornerRadius="3"
+                                                        Background="{StaticResource Db.Dark}" />
+                                            </Grid>
+                                        </Border>
+
+                                        <!-- Desglose por estado -->
+                                        <StackPanel Margin="0,16,0,0">
+                                            <Grid Margin="0,0,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Ellipse Grid.Column="0" Width="9" Height="9"
+                                                         Fill="{StaticResource Db.Dark}" Stroke="#E4E4E4"
+                                                         StrokeThickness="1" VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="1" Text="Listas para vender" Margin="10,0,0,0"
+                                                           FontSize="13" Foreground="{StaticResource Db.TextBody}" />
+                                                <TextBlock Grid.Column="2" x:Name="Lbl_LimpiezaListas" Text="12"
+                                                           FontSize="13" FontWeight="Medium"
+                                                           Foreground="{StaticResource Db.Text}" />
+                                            </Grid>
+                                            <Grid Margin="0,0,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Ellipse Grid.Column="0" Width="9" Height="9" Fill="{StaticResource Db.Mid}"
+                                                         Stroke="#E4E4E4" StrokeThickness="1" VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="1" Text="En proceso" Margin="10,0,0,0"
+                                                           FontSize="13" Foreground="{StaticResource Db.TextBody}" />
+                                                <TextBlock Grid.Column="2" x:Name="Lbl_LimpiezaProceso" Text="6"
+                                                           FontSize="13" FontWeight="Medium"
+                                                           Foreground="{StaticResource Db.Text}" />
+                                            </Grid>
+                                            <Grid Margin="0,0,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Ellipse Grid.Column="0" Width="9" Height="9" Fill="#D0D0D0"
+                                                         Stroke="#E4E4E4" StrokeThickness="1" VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="1" Text="Pendientes de revisión" Margin="10,0,0,0"
+                                                           FontSize="13" Foreground="{StaticResource Db.TextBody}" />
+                                                <TextBlock Grid.Column="2" x:Name="Lbl_LimpiezaRevision" Text="4"
+                                                           FontSize="13" FontWeight="Medium"
+                                                           Foreground="{StaticResource Db.Text}" />
+                                            </Grid>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Ellipse Grid.Column="0" Width="9" Height="9" Fill="#F0F0F0"
+                                                         Stroke="#E4E4E4" StrokeThickness="1" VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="1" Text="Bloqueadas" Margin="10,0,0,0"
+                                                           FontSize="13" Foreground="{StaticResource Db.TextBody}" />
+                                                <TextBlock Grid.Column="2" x:Name="Lbl_LimpiezaBloqueadas" Text="2"
+                                                           FontSize="13" FontWeight="Medium"
+                                                           Foreground="{StaticResource Db.Text}" />
+                                            </Grid>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Requiere atención -->
+                                <Border Style="{StaticResource Db.Card.Light}" Margin="0,16,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="Requiere atención" Style="{StaticResource Db.CardTitle}"
+                                                   Margin="0,0,0,14" />
+
+                                        <!-- Items_Alertas espera Titulo y Detalle -->
+                                        <ItemsControl x:Name="Items_Alertas">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="#F7F7F7" CornerRadius="14" Padding="14,12"
+                                                            Margin="0,0,0,10">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <Border Grid.Column="0" Width="26" Height="26"
+                                                                    CornerRadius="8"
+                                                                    Background="{StaticResource Db.Dark}"
+                                                                    VerticalAlignment="Top">
+                                                                <TextBlock Text="!" FontSize="12" FontWeight="SemiBold"
+                                                                           Foreground="{StaticResource Db.OnDark}"
+                                                                           HorizontalAlignment="Center"
+                                                                           VerticalAlignment="Center" />
+                                                            </Border>
+                                                            <StackPanel Grid.Column="1" Margin="11,0,0,0">
+                                                                <TextBlock Text="{Binding Titulo}" FontSize="13"
+                                                                           FontWeight="Medium"
+                                                                           Foreground="{StaticResource Db.Text}"
+                                                                           TextWrapping="Wrap" />
+                                                                <TextBlock Text="{Binding Detalle}" FontSize="11.5"
+                                                                           Foreground="{StaticResource Db.TextMuted}"
+                                                                           Margin="0,2,0,0" TextWrapping="Wrap" />
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- ============ Barra de estado ============ -->
+                        <Grid Margin="6,10,6,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <Ellipse Width="7" Height="7" Fill="{StaticResource Db.Dark}" VerticalAlignment="Center" />
+                                <TextBlock x:Name="Lbl_Conexion" Text="Conectado · Sucursal Centro" Margin="7,0,0,0"
+                                           FontSize="11.5" Foreground="#9A9A9A" />
+                            </StackPanel>
+                            <TextBlock Grid.Column="1" x:Name="Lbl_Sync" Text="Última sincronización 09:41"
+                                       Margin="18,0,0,0" FontSize="11.5" Foreground="#9A9A9A" />
+                            <TextBlock Grid.Column="2" x:Name="Lbl_Turno" Text="Turno mañana · Marina Ríos"
+                                       HorizontalAlignment="Right" FontSize="11.5" Foreground="#9A9A9A" />
+                        </Grid>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </ContentControl>
+        </DockPanel>
+    </Grid>
+</Window>
