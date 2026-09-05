@@ -34,15 +34,33 @@ namespace StayEasy.MPP
                         {
                             if (reader.Read())
                             {
+                                int usuarioId = reader.GetInt32(reader.GetOrdinal("UsuarioID"));
+
+                                int idxNombreUsuario = reader.GetOrdinal("NombreUsuario");
+                                string nombreUsuarioDb = reader.IsDBNull(idxNombreUsuario)
+                                    ? throw new InvalidOperationException("NombreUsuario column is null.")
+                                    : reader.GetString(idxNombreUsuario);
+
+                                int idxNombreCompleto = reader.GetOrdinal("NombreCompleto");
+                                string nombreCompleto = reader.IsDBNull(idxNombreCompleto)
+                                    ? string.Empty
+                                    : reader.GetString(idxNombreCompleto);
+
+                                int idxEmail = reader.GetOrdinal("Email");
+                                string email = reader.IsDBNull(idxEmail)
+                                    ? string.Empty
+                                    : reader.GetString(idxEmail);
+
                                 usuarioLogueado = new Usuario(
-                                    Convert.ToInt32(reader["UsuarioID"]),
-                                    reader["NombreUsuario"].ToString(),
+                                    usuarioId,
+                                    nombreUsuarioDb,
                                     passwordHash,
-                                    reader["NombreCompleto"].ToString(),
-                                    "" 
+                                    nombreCompleto,
+                                    email
                                 );
 
-                                usuarioLogueado.IdiomaPreferido = reader["IdiomaPreferido"].ToString();
+                                int idxIdioma = reader.GetOrdinal("IdiomaPreferido");
+                                usuarioLogueado.IdiomaPreferido = reader.IsDBNull(idxIdioma) ? "ES" : reader.GetString(idxIdioma);
                             }
                         }
                     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StayEasy.BLL;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,11 +12,13 @@ namespace StayEasy.UI
 {
     public partial class Registro : Window
     {
+        
         public Registro()
         {
             InitializeComponent();
             SetupEventHandlers();
         }
+        UsuarioSeguridadBLL usuario = new UsuarioSeguridadBLL();
 
         private void SetupEventHandlers()
         {
@@ -332,6 +335,8 @@ namespace StayEasy.UI
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
 
+
+            usuario.Registrar(Txt_Usuario.Text, GetPassword(), Txt_Nombre.Text+Txt_Apellido.Text, Txt_Correo.Text);
             var login = new Login();
             login.Show();
             this.Close();

@@ -1,11 +1,11 @@
-﻿using StayEasy.Seguridad.Entidades;
+﻿using StayEasy.MPP;       
+using StayEasy.Seguridad; 
+using StayEasy.Seguridad.Entidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StayEasy.Seguridad; 
-using StayEasy.MPP;       
 
 namespace StayEasy.BLL
 {
@@ -42,7 +42,7 @@ namespace StayEasy.BLL
 
             Usuario nuevoUsuario = new Usuario(0, nombreUsuario, hash, nombreCompleto, email);
 
-            _usuarioMPP.RegistrarUsuario(nuevoUsuario);
+            _usuarioDAL.RegistrarUsuario(nuevoUsuario);
         }
 
         public void Logout()

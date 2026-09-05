@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using StayEasy.BLL;
+using System.Windows;
+using StayEasy.Seguridad;
 using System.Windows.Controls;
 
 namespace StayEasy.UI
@@ -19,6 +21,7 @@ namespace StayEasy.UI
             Btn_IniciarSesion.Click += Btn_IniciarSesion_Click;
             Btn_Registrarse.Click += Btn_Registrarse_Click_1;
         }
+        UsuarioSeguridadBLL usuario = new UsuarioSeguridadBLL();
 
         private void Pwd_Password_PasswordChanged(object sender, RoutedEventArgs e)
         {
@@ -66,6 +69,13 @@ namespace StayEasy.UI
                 Pnl_Error.Visibility = Visibility.Visible;
                 Lbl_Error.Text = "Por favor, ingresá tu usuario y contraseña.";
                 return;
+            }
+            usuario.Login(Txt_Usuario.Text, Pwd_Password.Password);
+            if(GestorSesion.Instancia.UsuarioLogueado != null)
+            {
+                var Dashboard = new Dashboard();
+                Dashboard.Show();
+                this.Close();
             }
 
             Pnl_Error.Visibility = Visibility.Collapsed;
