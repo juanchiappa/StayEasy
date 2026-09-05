@@ -6,6 +6,7 @@
         MinWidth="1024" MinHeight="700"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI Variable Text, Segoe UI"
+        Icon="/Assets/stayeasy-marca-claro.ico"
         Background="#E6E6E6">
 
     <!-- Login (mockup monocromo). Paleta local: esta pantalla es previa al

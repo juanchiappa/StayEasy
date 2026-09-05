@@ -2,6 +2,11 @@
 
   <ItemGroup>
     <None Remove="Assets\Hotel.jpg" />
+    <None Remove="Assets\stayeasy-marca-oscuro.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\stayeasy-marca-claro.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +23,7 @@
     <Resource Include="Assets\Hotel.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\stayeasy-marca-oscuro.ico" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -26,6 +32,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Assets\stayeasy-marca-claro.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>

@@ -6,6 +6,7 @@
         MinWidth="1024" MinHeight="760"
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI Variable Text, Segoe UI"
+        Icon="/Assets/stayeasy-marca-claro.ico"
         Background="#E6E6E6">
 
     <!-- Registro (mockup monocromo). Misma paleta local que Login.xaml: es
