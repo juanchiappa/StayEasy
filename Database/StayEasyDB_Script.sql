@@ -234,6 +234,26 @@ BEGIN
 END;
 GO
 
+CREATE PROCEDURE sp_RegistrarUsuario
+    @NombreUsuario  VARCHAR(50),
+    @PasswordHash   VARBINARY(64),
+    @NombreCompleto VARCHAR(150),
+    @Email          VARCHAR(150),
+    @IdiomaPreferido VARCHAR(10)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF EXISTS (SELECT 1 FROM Usuario WHERE NombreUsuario = @NombreUsuario)
+    BEGIN
+        THROW 52002, 'El nombre de usuario ya está registrado. Elegí otro.', 1;
+    END
+
+    INSERT INTO Usuario (NombreUsuario, PasswordHash, NombreCompleto, Email, IdiomaPreferido, Activo, FechaCreacion)
+    VALUES (@NombreUsuario, @PasswordHash, @NombreCompleto, @Email, ISNULL(@IdiomaPreferido, 'ES'), 1, GETDATE());
+END;
+GO
+
 CREATE PROCEDURE sp_Logout
     @SesionID INT,
     @UsuarioID INT
