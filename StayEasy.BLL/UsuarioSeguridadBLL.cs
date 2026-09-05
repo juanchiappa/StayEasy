@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StayEasy.Seguridad; 
+using StayEasy.MPP;       
 
-namespace StayEasy.Seguridad
+namespace StayEasy.BLL
 {
     public class UsuarioSeguridadBLL
     {
         private readonly UsuarioSeguridadDAL _usuarioDAL = new UsuarioSeguridadDAL();
+        private readonly UsuarioMPP _usuarioMPP = new UsuarioMPP();
 
         public void Login(string nombreUsuario, string passwordPlana)
         {
@@ -30,7 +33,7 @@ namespace StayEasy.Seguridad
             }
         }
 
-        public int Registrar(string nombreUsuario, string passwordPlana, string nombreCompleto, string email)
+        public void Registrar(string nombreUsuario, string passwordPlana, string nombreCompleto, string email)
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(passwordPlana))
                 throw new ArgumentException("Faltan campos obligatorios para el registro.");
@@ -39,7 +42,7 @@ namespace StayEasy.Seguridad
 
             Usuario nuevoUsuario = new Usuario(0, nombreUsuario, hash, nombreCompleto, email);
 
-            return _usuarioDAL.RegistrarUsuario(nuevoUsuario);
+            _usuarioMPP.RegistrarUsuario(nuevoUsuario);
         }
 
         public void Logout()

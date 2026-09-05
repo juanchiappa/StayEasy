@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using System.Configuration;
 
-namespace StayEasy.Seguridad
+namespace StayEasy.MPP
 {
-    internal class UsuarioSeguridadDAL
+    public class UsuarioSeguridadDAL
     {
-        private readonly string _cadenaConexion = ConfigurationManager.ConnectionStrings["StayEasyDB"].ConnectionString;
+        private readonly string _connectionString = ConfigurationManager.ConnectionStrings["StayEasyDB"].ConnectionString;
 
         public Usuario Login(string nombreUsuario, byte[] passwordHash)
         {
             Usuario usuarioLogueado = null;
 
-            using (SqlConnection conexion = new SqlConnection(_cadenaConexion))
+            using (SqlConnection conexion = new SqlConnection(_connectionString))
             {
                 using (SqlCommand comando = new SqlCommand("sp_Login", conexion))
                 {
@@ -37,10 +37,12 @@ namespace StayEasy.Seguridad
                                 usuarioLogueado = new Usuario(
                                     Convert.ToInt32(reader["UsuarioID"]),
                                     reader["NombreUsuario"].ToString(),
-                                    new byte[0],
+                                    passwordHash,
                                     reader["NombreCompleto"].ToString(),
-                                    reader["Email"].ToString()
+                                    "" 
                                 );
+
+                                usuarioLogueado.IdiomaPreferido = reader["IdiomaPreferido"].ToString();
                             }
                         }
                     }
@@ -58,32 +60,34 @@ namespace StayEasy.Seguridad
             return usuarioLogueado;
         }
 
-        public int RegistrarUsuario(Usuario nuevoUsuario)
+        public void RegistrarUsuario(Usuario nuevoUsuario)
         {
-            int nuevoId = 0;
-
-            using (SqlConnection conexion = new SqlConnection(_cadenaConexion))
+            using (SqlConnection conexion = new SqlConnection(_connectionString))
             {
-                using (SqlCommand comando = new SqlCommand("sp_CrearUsuario", conexion))
+                using (SqlCommand comando = new SqlCommand("sp_RegistrarUsuario", conexion))
                 {
                     comando.CommandType = CommandType.StoredProcedure;
                     comando.Parameters.AddWithValue("@NombreUsuario", nuevoUsuario.NombreUsuario);
                     comando.Parameters.AddWithValue("@PasswordHash", nuevoUsuario.PasswordHash);
                     comando.Parameters.AddWithValue("@NombreCompleto", nuevoUsuario.NombreCompleto);
                     comando.Parameters.AddWithValue("@Email", nuevoUsuario.Email);
+                    comando.Parameters.AddWithValue("@IdiomaPreferido", nuevoUsuario.IdiomaPreferido ?? "ES");
 
                     try
                     {
                         conexion.Open();
-                        nuevoId = Convert.ToInt32(comando.ExecuteScalar());
+                        comando.ExecuteNonQuery();
                     }
                     catch (SqlException ex)
                     {
+                        if (ex.Number == 52002)
+                        {
+                            throw new Exception(ex.Message);
+                        }
                         throw new Exception("Error al registrar el usuario en la base de datos.", ex);
                     }
                 }
             }
-            return nuevoId;
         }
     }
 }

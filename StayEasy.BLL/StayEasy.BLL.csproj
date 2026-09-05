@@ -7,8 +7,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StayEasy.DAL\StayEasy.DAL.csproj" />
     <ProjectReference Include="..\StayEasy.BE\StayEasy.BE.csproj" />
+    <ProjectReference Include="..\StayEasy.MPP\StayEasy.MPP.csproj" />
+    <ProjectReference Include="..\StayEasy.Seguridad\StayEasy.Seguridad.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

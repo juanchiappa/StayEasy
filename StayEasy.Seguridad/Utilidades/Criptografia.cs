@@ -7,15 +7,14 @@ using System.Threading.Tasks;
 
 namespace StayEasy.Seguridad
 {
-    public class Criptografia
+    public static class Criptografia
     {
-        public static byte[] HashearPassword(string passwordPlana)
+        public static byte[] HashearPassword(string passwordEnClaro)
         {
-            if (string.IsNullOrWhiteSpace(passwordPlana)) return null;
-
             using (SHA256 sha256 = SHA256.Create())
             {
-                return sha256.ComputeHash(Encoding.UTF8.GetBytes(passwordPlana));
+                byte[] bytesPassword = Encoding.UTF8.GetBytes(passwordEnClaro);
+                return sha256.ComputeHash(bytesPassword);
             }
         }
     }
