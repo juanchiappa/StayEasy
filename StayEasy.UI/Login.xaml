@@ -7,17 +7,16 @@
         WindowStartupLocation="CenterScreen"
         FontFamily="Segoe UI Variable Text, Segoe UI"
         Icon="/Assets/stayeasy-marca-claro.ico"
-        Background="#E6E6E6">
-
-    <!-- Login (mockup monocromo). Paleta local: esta pantalla es previa al
-         shell y no consume StayEasy.Tokens a propósito, para que el contraste
-         alto del panel oscuro no dependa del tema de la app. -->
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip"
+        Background="Transparent">
 
     <Window.Resources>
 
         <!-- ========== Paleta ========== -->
         <SolidColorBrush x:Key="Login.Brush.Bg"          Color="#E6E6E6" />
-        <SolidColorBrush x:Key="Login.Brush.Glass"       Color="#6BFFFFFF" />
+        <SolidColorBrush x:Key="Login.Brush.Glass"       Color="#E6E6E6" />
         <SolidColorBrush x:Key="Login.Brush.GlassBorder" Color="#B8FFFFFF" />
         <SolidColorBrush x:Key="Login.Brush.Card"        Color="#FFFFFF" />
         <SolidColorBrush x:Key="Login.Brush.Dark"        Color="#1C1C1C" />
@@ -74,9 +73,7 @@
             <Setter Property="Margin" Value="0,4,0,0" />
         </Style>
 
-        <!-- ========== Campos de texto ==========
-             El TextBox real no tiene borde: el Border exterior dibuja el
-             radio y cambia de color en foco (via IsKeyboardFocusWithin). -->
+        <!-- ========== Campos de texto ========== -->
         <Style x:Key="Login.FieldShell" TargetType="Border">
             <Setter Property="Height" Value="50" />
             <Setter Property="CornerRadius" Value="14" />
@@ -110,8 +107,6 @@
             <Setter Property="CaretBrush" Value="{StaticResource Login.Brush.Text}" />
         </Style>
 
-        <!-- Placeholder: TextBlock encima del campo, oculto cuando hay texto.
-             El code-behind alterna Visibility en TextChanged / PasswordChanged. -->
         <Style x:Key="Login.Placeholder" TargetType="TextBlock">
             <Setter Property="FontSize" Value="15" />
             <Setter Property="Foreground" Value="#A3A3A3" />
@@ -119,7 +114,7 @@
             <Setter Property="IsHitTestVisible" Value="False" />
         </Style>
 
-        <!-- ========== Botón primario (pill negro) ========== -->
+        <!-- ========== Botón primario ========== -->
         <Style x:Key="Login.Button.Primary" TargetType="Button">
             <Setter Property="Height" Value="52" />
             <Setter Property="FontSize" Value="15" />
@@ -153,7 +148,7 @@
             </Setter>
         </Style>
 
-        <!-- ========== Botón secundario (pill blanco, borde) ========== -->
+        <!-- ========== Botón secundario ========== -->
         <Style x:Key="Login.Button.Secondary" TargetType="Button">
             <Setter Property="Height" Value="52" />
             <Setter Property="FontSize" Value="15" />
@@ -182,7 +177,7 @@
             </Setter>
         </Style>
 
-        <!-- ========== Botón de enlace (texto) ========== -->
+        <!-- ========== Botón de enlace ========== -->
         <Style x:Key="Login.Button.Link" TargetType="Button">
             <Setter Property="FontSize" Value="14" />
             <Setter Property="Foreground" Value="{StaticResource Login.Brush.Label}" />
@@ -205,7 +200,7 @@
             </Setter>
         </Style>
 
-        <!-- ========== Botón del ojo (mostrar contraseña) ========== -->
+        <!-- ========== Botón del ojo ========== -->
         <Style x:Key="Login.Button.Eye" TargetType="ToggleButton">
             <Setter Property="Width" Value="34" />
             <Setter Property="Height" Value="34" />
@@ -234,7 +229,7 @@
             </Setter>
         </Style>
 
-        <!-- ========== Checkbox cuadrado con radio ========== -->
+        <!-- ========== Checkbox ========== -->
         <Style x:Key="Login.CheckBox" TargetType="CheckBox">
             <Setter Property="FontSize" Value="14" />
             <Setter Property="Foreground" Value="#3D3D3D" />
@@ -271,7 +266,7 @@
             </Setter>
         </Style>
 
-        <!-- ========== Tarjeta métrica del panel oscuro ========== -->
+        <!-- ========== Tarjeta métrica ========== -->
         <Style x:Key="Login.MetricTile" TargetType="Border">
             <Setter Property="Background" Value="{StaticResource Login.Brush.DarkTile}" />
             <Setter Property="BorderBrush" Value="{StaticResource Login.Brush.DarkBorder}" />
@@ -283,43 +278,15 @@
     </Window.Resources>
 
     <!-- ========== Fondo ========== -->
-    <Grid Background="{StaticResource Login.Brush.Bg}" ClipToBounds="True">
+    <Grid x:Name="MainGrid" Background="Transparent" ClipToBounds="True"
+          MouseLeftButtonDown="MainGrid_MouseLeftButtonDown">
 
-        <!-- Blobs difusos del fondo (equivalentes a los radiales del mockup) -->
-        <Ellipse Width="900" Height="900" Margin="-180,-280,0,0"
-                 HorizontalAlignment="Left" VerticalAlignment="Top" IsHitTestVisible="False">
-            <Ellipse.Fill>
-                <RadialGradientBrush Center="0.35,0.35" GradientOrigin="0.35,0.35" RadiusX="0.55" RadiusY="0.55">
-                    <GradientStop Color="#FFFFFFFF" Offset="0" />
-                    <GradientStop Color="#00FFFFFF" Offset="1" />
-                </RadialGradientBrush>
-            </Ellipse.Fill>
-        </Ellipse>
+        <!-- Blobs difusos del fondo (opcional, puedes eliminarlos si no los quieres) -->
 
-        <Ellipse Width="760" Height="760" Margin="0,0,-140,-260"
-                 HorizontalAlignment="Right" VerticalAlignment="Bottom" IsHitTestVisible="False">
-            <Ellipse.Fill>
-                <RadialGradientBrush Center="0.55,0.45" GradientOrigin="0.55,0.45" RadiusX="0.6" RadiusY="0.6">
-                    <GradientStop Color="#FFCFCFCF" Offset="0" />
-                    <GradientStop Color="#00CFCFCF" Offset="1" />
-                </RadialGradientBrush>
-            </Ellipse.Fill>
-        </Ellipse>
-
-        <Ellipse Width="620" Height="620" Margin="240,0,0,-180"
-                 HorizontalAlignment="Left" VerticalAlignment="Bottom" IsHitTestVisible="False">
-            <Ellipse.Fill>
-                <RadialGradientBrush RadiusX="0.55" RadiusY="0.55">
-                    <GradientStop Color="#FFF6F6F6" Offset="0" />
-                    <GradientStop Color="#00F6F6F6" Offset="1" />
-                </RadialGradientBrush>
-            </Ellipse.Fill>
-        </Ellipse>
-
-        <!-- ================= Contenedor "vidrio" ================= -->
+        <!-- ================= Contenedor "vidrio" con fondo gris ================= -->
         <Border MaxWidth="1120" Margin="48"
                 Background="{StaticResource Login.Brush.Glass}"
-                BorderBrush="{StaticResource Login.Brush.GlassBorder}" BorderThickness="1"
+                BorderBrush="#D0D0D0" BorderThickness="1"
                 CornerRadius="32" Padding="20"
                 HorizontalAlignment="Center" VerticalAlignment="Center">
             <Border.Effect>
@@ -333,9 +300,10 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- ========== Panel oscuro: marca, claim y métricas ========== -->
-                <Border Grid.Column="0" Background="{StaticResource Login.Brush.Dark}"
-                        CornerRadius="24" Padding="40" MinHeight="560">
+                <!-- ========== Panel oscuro ========== -->
+                <Border x:Name="Panel_Arrastre" Grid.Column="0" Background="{StaticResource Login.Brush.Dark}"
+                        CornerRadius="24" Padding="40" MinHeight="560"
+                        MouseLeftButtonDown="Panel_Arrastre_MouseLeftButtonDown">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -397,7 +365,7 @@
 
                 <!-- ========== Formulario ========== -->
                 <Border Grid.Column="2" Background="{StaticResource Login.Brush.Card}"
-        CornerRadius="24" Padding="44,48">
+                        CornerRadius="24" Padding="44,48">
                     <StackPanel VerticalAlignment="Center">
 
                         <TextBlock Text="¡Bienvenido de nuevo!" Style="{StaticResource Login.Text.Heading}" />
@@ -427,11 +395,8 @@
                                 <Grid Grid.Column="0">
                                     <TextBlock x:Name="Ph_Password" Text="Ingresá tu contraseña"
                                                Style="{StaticResource Login.Placeholder}" />
-                                    <!-- Contraseña oculta -->
                                     <PasswordBox x:Name="Pwd_Password" Style="{StaticResource Login.FieldPassword}"
                                                  TabIndex="2" />
-                                    <!-- Contraseña visible: el code-behind alterna Visibility
-                                         entre Pwd_Password y Txt_PasswordVisible y sincroniza el valor. -->
                                     <TextBox x:Name="Txt_PasswordVisible" Style="{StaticResource Login.FieldInput}"
                                              Visibility="Collapsed" />
                                 </Grid>
@@ -458,7 +423,7 @@
                                     VerticalAlignment="Center" TabIndex="7" />
                         </Grid>
 
-                        <!-- Mensaje de error de credenciales (oculto por defecto) -->
+                        <!-- Mensaje de error -->
                         <Border x:Name="Pnl_Error" Margin="0,16,0,0" Padding="14,10"
                                 CornerRadius="12" Background="#F4F4F4" BorderBrush="#E0E0E0"
                                 BorderThickness="1" Visibility="Collapsed">
@@ -469,10 +434,10 @@
 
                         <!-- Acción primaria -->
                         <Button x:Name="Btn_IniciarSesion" Content="Iniciar sesión"
-                        Style="{StaticResource Login.Button.Primary}"
-                        Margin="0,26,0,0" IsDefault="True" TabIndex="5" />
+                                Style="{StaticResource Login.Button.Primary}"
+                                Margin="0,26,0,0" IsDefault="True" TabIndex="5" />
 
-                        <!-- Separador "o continuá con" -->
+                        <!-- Separador -->
                         <Grid Margin="0,14,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />

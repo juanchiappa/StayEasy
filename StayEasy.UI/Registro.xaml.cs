@@ -5,6 +5,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -12,7 +14,7 @@ namespace StayEasy.UI
 {
     public partial class Registro : Window
     {
-        
+
         public Registro()
         {
             InitializeComponent();
@@ -22,6 +24,12 @@ namespace StayEasy.UI
 
         private void SetupEventHandlers()
         {
+            // Arrastre desde el panel oscuro (izquierda) - SOLO en áreas no interactivas
+            Panel_Arrastre.MouseLeftButtonDown += Panel_Arrastre_MouseLeftButtonDown;
+
+            // Arrastre desde el Grid principal - SOLO en áreas no interactivas
+            MainGrid.MouseLeftButtonDown += MainGrid_MouseLeftButtonDown;
+
             Txt_Nombre.TextChanged += (s, e) =>
                 Ph_Nombre.Visibility = string.IsNullOrEmpty(Txt_Nombre.Text)
                     ? Visibility.Visible : Visibility.Collapsed;
@@ -73,6 +81,91 @@ namespace StayEasy.UI
 
             Btn_CrearCuenta.Click += Btn_CrearCuenta_Click;
             Btn_IniciarSesion.Click += Btn_IniciarSesion_Click;
+        }
+
+        private void Panel_Arrastre_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ButtonState != MouseButtonState.Pressed)
+                return;
+
+            // Verificar que no se hizo clic en un elemento interactivo dentro del panel oscuro
+            if (e.OriginalSource is FrameworkElement element)
+            {
+                // Si el elemento es interactivo, no arrastrar
+                if (element is Button ||
+                    element is TextBox ||
+                    element is PasswordBox ||
+                    element is CheckBox ||
+                    element is RadioButton ||
+                    element is ToggleButton ||
+                    element is ComboBox ||
+                    element is ListBox ||
+                    element is ScrollViewer)
+                {
+                    return;
+                }
+
+                // Si el elemento es un TextBlock (etiquetas de texto), permitir arrastre
+                if (element is TextBlock)
+                {
+                    try { this.DragMove(); } catch { }
+                    return;
+                }
+            }
+
+            try
+            {
+                this.DragMove();
+            }
+            catch (InvalidOperationException)
+            {
+                // Si falla, ignorar
+            }
+        }
+
+        private void MainGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // Verificar que el botón izquierdo del mouse está presionado
+            if (e.ButtonState != MouseButtonState.Pressed)
+                return;
+
+            // Verificar que no se hizo clic en un elemento interactivo
+            if (e.OriginalSource is FrameworkElement element)
+            {
+                // Si el elemento es un control interactivo, NO arrastrar
+                if (element is Button ||
+                    element is TextBox ||
+                    element is PasswordBox ||
+                    element is CheckBox ||
+                    element is RadioButton ||
+                    element is ToggleButton ||
+                    element is ComboBox ||
+                    element is ListBox ||
+                    element is ScrollViewer)
+                {
+                    return;
+                }
+
+                // Si el elemento es un Border, StackPanel o Grid que contiene controles, NO arrastrar
+                if (element is Border || element is StackPanel || element is Grid)
+                {
+                    // Permitir arrastre solo si es el panel oscuro o el fondo
+                    if (element.Name != "Panel_Arrastre" && element.Name != "MainGrid" && element.Name != "Panel_Formulario")
+                    {
+                        return;
+                    }
+                }
+            }
+
+            // Si no se hizo clic en un control interactivo, arrastrar la ventana
+            try
+            {
+                this.DragMove();
+            }
+            catch (InvalidOperationException)
+            {
+                // Si falla, ignorar
+            }
         }
 
         private void Pwd_Password_PasswordChanged(object sender, RoutedEventArgs e)
@@ -335,8 +428,8 @@ namespace StayEasy.UI
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
 
-
-            usuario.Registrar(Txt_Usuario.Text, GetPassword(), Txt_Nombre.Text+Txt_Apellido.Text, Txt_Correo.Text);
+            string nombreCompleto = Txt_Nombre.Text + " " + Txt_Apellido.Text;
+            usuario.Registrar(Txt_Usuario.Text, GetPassword(), nombreCompleto, Txt_Correo.Text);
             var login = new Login();
             login.Show();
             this.Close();

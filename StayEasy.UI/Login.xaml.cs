@@ -1,7 +1,9 @@
 ﻿using StayEasy.BLL;
-using System.Windows;
 using StayEasy.Seguridad;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace StayEasy.UI
 {
@@ -10,9 +12,23 @@ namespace StayEasy.UI
         public Login()
         {
             InitializeComponent();
+            SetupEventHandlers();
+        }
+
+        UsuarioSeguridadBLL usuario = new UsuarioSeguridadBLL();
+
+        private void SetupEventHandlers()
+        {
+            // Arrastre desde el panel oscuro
+            Panel_Arrastre.MouseLeftButtonDown += Panel_Arrastre_MouseLeftButtonDown;
+
+            // Arrastre desde el Grid principal
+            MainGrid.MouseLeftButtonDown += MainGrid_MouseLeftButtonDown;
+
             Txt_Usuario.TextChanged += (s, e) =>
                 Ph_Usuario.Visibility = string.IsNullOrEmpty(Txt_Usuario.Text)
                     ? Visibility.Visible : Visibility.Collapsed;
+
             Pwd_Password.PasswordChanged += Pwd_Password_PasswordChanged;
             Txt_PasswordVisible.TextChanged += Txt_PasswordVisible_TextChanged;
             Btn_VerPassword.Checked += (s, e) => MostrarPassword(true);
@@ -21,7 +37,48 @@ namespace StayEasy.UI
             Btn_IniciarSesion.Click += Btn_IniciarSesion_Click;
             Btn_Registrarse.Click += Btn_Registrarse_Click_1;
         }
-        UsuarioSeguridadBLL usuario = new UsuarioSeguridadBLL();
+
+        private void Panel_Arrastre_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ButtonState != MouseButtonState.Pressed)
+                return;
+
+            if (e.OriginalSource is FrameworkElement element)
+            {
+                if (element is Button ||
+                    element is TextBox ||
+                    element is PasswordBox ||
+                    element is CheckBox ||
+                    element is RadioButton ||
+                    element is ToggleButton)
+                {
+                    return;
+                }
+            }
+
+            try { this.DragMove(); } catch { }
+        }
+
+        private void MainGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ButtonState != MouseButtonState.Pressed)
+                return;
+
+            if (e.OriginalSource is FrameworkElement element)
+            {
+                if (element is Button ||
+                    element is TextBox ||
+                    element is PasswordBox ||
+                    element is CheckBox ||
+                    element is RadioButton ||
+                    element is ToggleButton)
+                {
+                    return;
+                }
+            }
+
+            try { this.DragMove(); } catch { }
+        }
 
         private void Pwd_Password_PasswordChanged(object sender, RoutedEventArgs e)
         {
@@ -71,7 +128,7 @@ namespace StayEasy.UI
                 return;
             }
             usuario.Login(Txt_Usuario.Text, Pwd_Password.Password);
-            if(GestorSesion.Instancia.UsuarioLogueado != null)
+            if (GestorSesion.Instancia.UsuarioLogueado != null)
             {
                 var Dashboard = new Dashboard();
                 Dashboard.Show();
@@ -80,7 +137,6 @@ namespace StayEasy.UI
 
             Pnl_Error.Visibility = Visibility.Collapsed;
         }
-
 
         private void Btn_Registrarse_Click_1(object sender, RoutedEventArgs e)
         {
