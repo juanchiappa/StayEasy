@@ -44,5 +44,39 @@ namespace StayEasy.DAL.Registro
                 }
             }
         }
+
+        public int EscribirEscalar(string storedProcedure, Hashtable parametros)
+        {
+            using (SqlConnection conexion = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(storedProcedure, conexion))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    if (parametros != null)
+                    {
+                        foreach (DictionaryEntry param in parametros)
+                        {
+                            cmd.Parameters.AddWithValue(param.Key.ToString(), param.Value);
+                        }
+                    }
+
+                    try
+                    {
+                        conexion.Open();
+                        object resultado = cmd.ExecuteScalar();
+                        return Convert.ToInt32(resultado);
+                    }
+                    catch (SqlException ex)
+                    {
+                        if (ex.Number == 52010)
+                        {
+                            throw new Exception(ex.Message);
+                        }
+                        throw new Exception($"Error de base de datos en Reservas: {ex.Message}", ex);
+                    }
+                }
+            }
+        }
     }
 }
