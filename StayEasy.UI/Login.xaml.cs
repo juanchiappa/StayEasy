@@ -144,5 +144,11 @@ namespace StayEasy.UI
             registro.Show();
             this.Close();
         }
+
+        private void Btn_OlvidePassword_Click(object sender, RoutedEventArgs e)
+        {
+            var rp = new ResetPassword();
+            rp.Show();
+        }
     }
 }

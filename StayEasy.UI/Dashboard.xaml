@@ -586,7 +586,7 @@
                         </Grid>
                     </Border>
 
-                    <Button x:Name="Btn_NuevaReserva" Style="{StaticResource Db.Button.Pill}" Margin="8,0,0,0">
+                    <Button x:Name="Btn_NuevaReserva" Style="{StaticResource Db.Button.Pill}" Margin="8,0,0,0" Click="Btn_NuevaReserva_Click">
                         <StackPanel Orientation="Horizontal">
                             <Path Width="14" Height="14" Stretch="Uniform" Fill="Transparent"
                                   Stroke="{StaticResource Db.OnDark}" StrokeThickness="2.4"

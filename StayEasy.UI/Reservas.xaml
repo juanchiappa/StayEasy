@@ -1,4 +1,4 @@
-﻿<Window x:Class="StayEasy.UI.Reserva"
+﻿<Window x:Class="StayEasy.UI.Reservas"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Nueva reserva"

@@ -15,9 +15,9 @@ namespace StayEasy.UI
     /// <summary>
     /// Lógica de interacción para Reserva.xaml
     /// </summary>
-    public partial class Reserva : Window
+    public partial class Reservas : Window
     {
-        public Reserva()
+        public Reservas()
         {
             InitializeComponent();
         }

@@ -24,5 +24,12 @@ namespace StayEasy.UI
             }
             Lbl_iniciales.Text = iniciales;
         }
+
+        private void Btn_NuevaReserva_Click(object sender, RoutedEventArgs e)
+        {
+            var reserva = new Reservas();
+            reserva.Show();
+            this.Close();
+        }
     }
 }
