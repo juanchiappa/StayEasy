@@ -487,13 +487,13 @@
                             </Border>
 
                             <!-- ==================== Rol ==================== -->
-                            <TextBlock Text="Rol" Style="{StaticResource Rg.FieldLabel}" Margin="0,15,0,7" />
+                            <TextBlock x:Name="txt_rol" Text="Rol" Style="{StaticResource Rg.FieldLabel}" Margin="0,15,0,7" Visibility="Collapsed" />
                             <StackPanel Orientation="Horizontal">
-                                <RadioButton x:Name="Rol_Recepcion" Content="Recepción" IsChecked="True"
+                                <RadioButton x:Name="Rol_Recepcion" Content="Recepción" IsChecked="True" Visibility="Collapsed"
                                              Style="{StaticResource Rg.RolePill}" TabIndex="5" />
-                                <RadioButton x:Name="Rol_Limpieza" Content="Limpieza"
+                                <RadioButton x:Name="Rol_Limpieza" Content="Limpieza" Visibility="Collapsed"
                                              Style="{StaticResource Rg.RolePill}" TabIndex="6" />
-                                <RadioButton x:Name="Rol_Administracion" Content="Administración"
+                                <RadioButton x:Name="Rol_Administracion" Content="Administración" Visibility="Collapsed"
                                              Style="{StaticResource Rg.RolePill}" Margin="0" TabIndex="7" />
                             </StackPanel>
 

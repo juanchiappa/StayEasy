@@ -48,7 +48,7 @@ namespace StayEasy.UI
                     ? Visibility.Visible : Visibility.Collapsed;
                 ValidateUsername();
             };
-
+            Txt_Correo.TextChanged += Txt_Correo_TextChanged;
             Pwd_Password.PasswordChanged += Pwd_Password_PasswordChanged;
             Txt_PasswordVisible.TextChanged += Txt_PasswordVisible_TextChanged;
 
@@ -440,6 +440,35 @@ namespace StayEasy.UI
             var login = new Login();
             login.Show();
             this.Close();
+        }
+
+        private void Rol_Recepcion_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+        public void Txt_Correo_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string username = Txt_Correo.Text;
+            int indice = username.IndexOf('@');
+
+            if (indice != -1)
+            {
+                string resultado = username.Substring(indice + 1);
+                if (resultado == "stayeasy.enterprise.com.ar")
+                {
+                    txt_rol.Visibility = Visibility.Visible;
+                    Rol_Administracion.Visibility = Visibility.Visible;
+                    Rol_Limpieza.Visibility = Visibility.Visible;
+                    Rol_Recepcion.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    txt_rol.Visibility = Visibility.Collapsed;
+                    Rol_Administracion.Visibility = Visibility.Collapsed;
+                    Rol_Limpieza.Visibility = Visibility.Collapsed;
+                    Rol_Recepcion.Visibility = Visibility.Collapsed;
+                }
+            }
         }
     }
 }
