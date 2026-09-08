@@ -1,202 +1,421 @@
--- ============================================================================
--- PROYECTO 5: STAYEASY — Administración de Hoteles y Reservas
--- ============================================================================
-
-CREATE DATABASE StayEasyDB;
+USE [StayEasyDB]
 GO
-USE StayEasyDB;
+/****** Object:  Table [dbo].[Bitacora]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Bitacora](
+	[BitacoraID] [int] IDENTITY(1,1) NOT NULL,
+	[UsuarioID] [int] NULL,
+	[Fecha] [datetime] NOT NULL,
+	[Criticidad] [varchar](10) NOT NULL,
+	[Accion] [varchar](100) NOT NULL,
+	[Descripcion] [varchar](500) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[BitacoraID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ConsumoReserva]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ConsumoReserva](
+	[ConsumoID] [int] IDENTITY(1,1) NOT NULL,
+	[ID_Reserva] [int] NOT NULL,
+	[ID_Servicio] [int] NOT NULL,
+	[Cantidad] [int] NOT NULL,
+	[PrecioUnitario] [decimal](18, 2) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ConsumoID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Habitacion]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Habitacion](
+	[ID_habitacion] [int] IDENTITY(1,1) NOT NULL,
+	[Numero] [int] NOT NULL,
+	[TipoHabitacion] [char](1) NOT NULL,
+	[PrecioBase] [decimal](18, 2) NOT NULL,
+	[NivelDeServicio] [char](1) NOT NULL,
+	[Estado] [char](1) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID_habitacion] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Numero] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Huesped]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Huesped](
+	[HuespedID] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](100) NOT NULL,
+	[Apellido] [varchar](100) NOT NULL,
+	[DNI] [int] NOT NULL,
+	[Email] [varchar](150) NULL,
+	[Telefono] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[HuespedID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[DNI] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Idioma]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Idioma](
+	[IdiomaID] [int] IDENTITY(1,1) NOT NULL,
+	[Codigo] [varchar](10) NOT NULL,
+	[Nombre] [varchar](50) NOT NULL,
+	[Activo] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[IdiomaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Codigo] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Paquete]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Paquete](
+	[ID_Paquete] [int] NOT NULL,
+	[ID_Servicio] [int] NOT NULL,
+	[Cantidad] [int] NOT NULL,
+	[PrecioUnitario] [decimal](18, 2) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID_Paquete] ASC,
+	[ID_Servicio] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Patente]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Patente](
+	[PatenteID] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](100) NOT NULL,
+	[Descripcion] [varchar](255) NULL,
+	[EsFamilia] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[PatenteID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PatenteJerarquia]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PatenteJerarquia](
+	[FamiliaPadreID] [int] NOT NULL,
+	[PatenteHijaID] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[FamiliaPadreID] ASC,
+	[PatenteHijaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Reserva]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Reserva](
+	[ID_Reserva] [int] IDENTITY(1,1) NOT NULL,
+	[HuespedID] [int] NOT NULL,
+	[HabitacionID] [int] NOT NULL,
+	[FechaCheckIn] [date] NOT NULL,
+	[FechaCheckOut] [date] NOT NULL,
+	[Estado] [varchar](20) NOT NULL,
+	[Total] [decimal](18, 2) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID_Reserva] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ServicioLimpieza]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ServicioLimpieza](
+	[AlertaID] [int] IDENTITY(1,1) NOT NULL,
+	[HabitacionID] [int] NOT NULL,
+	[FechaHora] [datetime] NOT NULL,
+	[Prioridad] [varchar](20) NOT NULL,
+	[Atendida] [bit] NOT NULL,
+	[UsuarioAtendioID] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[AlertaID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ServiciosPaquete]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ServiciosPaquete](
+	[ID_Servicio] [int] IDENTITY(1,1) NOT NULL,
+	[Nombre] [varchar](100) NOT NULL,
+	[Precio] [decimal](18, 2) NOT NULL,
+	[EsCombo] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ID_Servicio] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[SesionUsuario]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[SesionUsuario](
+	[SesionID] [int] IDENTITY(1,1) NOT NULL,
+	[UsuarioID] [int] NOT NULL,
+	[FechaLogin] [datetime] NOT NULL,
+	[FechaLogout] [datetime] NULL,
+	[Exitoso] [bit] NOT NULL,
+	[DireccionIP] [varchar](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[SesionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Traduccion]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Traduccion](
+	[TraduccionID] [int] IDENTITY(1,1) NOT NULL,
+	[IdiomaID] [int] NOT NULL,
+	[Clave] [varchar](100) NOT NULL,
+	[Valor] [nvarchar](255) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[TraduccionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_Traduccion] UNIQUE NONCLUSTERED 
+(
+	[IdiomaID] ASC,
+	[Clave] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Usuario]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Usuario](
+	[UsuarioID] [int] IDENTITY(1,1) NOT NULL,
+	[NombreUsuario] [varchar](50) NOT NULL,
+	[PasswordHash] [varbinary](64) NOT NULL,
+	[NombreCompleto] [varchar](150) NOT NULL,
+	[Email] [varchar](150) NOT NULL,
+	[IdiomaPreferido] [varchar](10) NOT NULL,
+	[Activo] [bit] NOT NULL,
+	[FechaCreacion] [datetime] NOT NULL,
+	[UltimoLogin] [datetime] NULL,
+	[PasswordReset] [varbinary](50) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[UsuarioID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[NombreUsuario] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UsuarioPatente]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UsuarioPatente](
+	[UsuarioID] [int] NOT NULL,
+	[PatenteID] [int] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[UsuarioID] ASC,
+	[PatenteID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Bitacora] ADD  DEFAULT (getdate()) FOR [Fecha]
+GO
+ALTER TABLE [dbo].[ConsumoReserva] ADD  DEFAULT ((1)) FOR [Cantidad]
+GO
+ALTER TABLE [dbo].[Habitacion] ADD  DEFAULT ('D') FOR [Estado]
+GO
+ALTER TABLE [dbo].[Idioma] ADD  DEFAULT ((1)) FOR [Activo]
+GO
+ALTER TABLE [dbo].[Paquete] ADD  DEFAULT ((1)) FOR [Cantidad]
+GO
+ALTER TABLE [dbo].[Patente] ADD  DEFAULT ((0)) FOR [EsFamilia]
+GO
+ALTER TABLE [dbo].[Reserva] ADD  DEFAULT ('Confirmada') FOR [Estado]
+GO
+ALTER TABLE [dbo].[ServicioLimpieza] ADD  DEFAULT (getdate()) FOR [FechaHora]
+GO
+ALTER TABLE [dbo].[ServicioLimpieza] ADD  DEFAULT ('Normal') FOR [Prioridad]
+GO
+ALTER TABLE [dbo].[ServicioLimpieza] ADD  DEFAULT ((0)) FOR [Atendida]
+GO
+ALTER TABLE [dbo].[SesionUsuario] ADD  DEFAULT (getdate()) FOR [FechaLogin]
+GO
+ALTER TABLE [dbo].[Usuario] ADD  DEFAULT ('ES') FOR [IdiomaPreferido]
+GO
+ALTER TABLE [dbo].[Usuario] ADD  DEFAULT ((1)) FOR [Activo]
+GO
+ALTER TABLE [dbo].[Usuario] ADD  DEFAULT (getdate()) FOR [FechaCreacion]
+GO
+ALTER TABLE [dbo].[Bitacora]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
+REFERENCES [dbo].[Usuario] ([UsuarioID])
+GO
+ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Reserva])
+REFERENCES [dbo].[Reserva] ([ID_Reserva])
+GO
+ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
+REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
+GO
+ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Paquete])
+REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
+GO
+ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
+REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
+GO
+ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([FamiliaPadreID])
+REFERENCES [dbo].[Patente] ([PatenteID])
+GO
+ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([PatenteHijaID])
+REFERENCES [dbo].[Patente] ([PatenteID])
+GO
+ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
+REFERENCES [dbo].[Habitacion] ([ID_habitacion])
+GO
+ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HuespedID])
+REFERENCES [dbo].[Huesped] ([HuespedID])
+GO
+ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
+REFERENCES [dbo].[Habitacion] ([ID_habitacion])
+GO
+ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([UsuarioAtendioID])
+REFERENCES [dbo].[Usuario] ([UsuarioID])
+GO
+ALTER TABLE [dbo].[SesionUsuario]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
+REFERENCES [dbo].[Usuario] ([UsuarioID])
+GO
+ALTER TABLE [dbo].[Traduccion]  WITH CHECK ADD FOREIGN KEY([IdiomaID])
+REFERENCES [dbo].[Idioma] ([IdiomaID])
+GO
+ALTER TABLE [dbo].[UsuarioPatente]  WITH CHECK ADD FOREIGN KEY([PatenteID])
+REFERENCES [dbo].[Patente] ([PatenteID])
+GO
+ALTER TABLE [dbo].[UsuarioPatente]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
+REFERENCES [dbo].[Usuario] ([UsuarioID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD  CONSTRAINT [CK_Paquete_NoAutoReferencia] CHECK  (([ID_Paquete]<>[ID_Servicio]))
+GO
+ALTER TABLE [dbo].[Paquete] CHECK CONSTRAINT [CK_Paquete_NoAutoReferencia]
+GO
+ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD  CONSTRAINT [CK_Reserva_Estado] CHECK  (([Estado]='Cancelada' OR [Estado]='Finalizada' OR [Estado]='EnCurso' OR [Estado]='Confirmada'))
+GO
+ALTER TABLE [dbo].[Reserva] CHECK CONSTRAINT [CK_Reserva_Estado]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_AtenderServicioLimpieza]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
 GO
 
--- ============================================================================
--- 1. MÓDULO DE SEGURIDAD Y PERMISOS (Patrón Composite)
--- ============================================================================
+CREATE PROCEDURE [dbo].[sp_AtenderServicioLimpieza]
+    @AlertaID   INT,
+    @UsuarioID  INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        UPDATE ServicioLimpieza
+        SET Atendida = 1, UsuarioAtendioID = @UsuarioID
+        WHERE AlertaID = @AlertaID;
 
-CREATE TABLE Patente (
-    PatenteID       INT IDENTITY(1,1) PRIMARY KEY,
-    Nombre          VARCHAR(100) NOT NULL,
-    Descripcion     VARCHAR(255) NULL,
-    EsFamilia       BIT NOT NULL DEFAULT 0 -- 0: patente simple, 1: familia (rol)
-);
+        INSERT INTO Bitacora (UsuarioID, Criticidad, Accion, Descripcion)
+        VALUES (@UsuarioID, 'Baja', 'LIMPIEZA_ATENDIDA', 'Servicio de limpieza #' + CAST(@AlertaID AS VARCHAR(10)) + ' atendido.');
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW 52012, 'Error al marcar el servicio de limpieza.', 1;
+    END CATCH
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_BackupBaseDatos]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE TABLE PatenteJerarquia (
-    FamiliaPadreID  INT NOT NULL,
-    PatenteHijaID   INT NOT NULL,
-    PRIMARY KEY (FamiliaPadreID, PatenteHijaID),
-    FOREIGN KEY (FamiliaPadreID) REFERENCES Patente(PatenteID),
-    FOREIGN KEY (PatenteHijaID)  REFERENCES Patente(PatenteID)
-);
+CREATE PROCEDURE [dbo].[sp_BackupBaseDatos]
+    @RutaArchivo VARCHAR(260)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BACKUP DATABASE StayEasyDB TO DISK = @RutaArchivo WITH FORMAT, INIT, NAME = 'Backup completo de StayEasyDB';
+END;
 GO
-
-CREATE TABLE Usuario (
-    UsuarioID       INT IDENTITY(1,1) PRIMARY KEY,
-    NombreUsuario   VARCHAR(50) UNIQUE NOT NULL,
-    PasswordHash    VARBINARY(64) NOT NULL, -- SHA-256
-    NombreCompleto  VARCHAR(150) NOT NULL,
-    Email           VARCHAR(150) NOT NULL,
-    IdiomaPreferido VARCHAR(10) NOT NULL DEFAULT 'ES',
-    Activo          BIT NOT NULL DEFAULT 1,
-    FechaCreacion   DATETIME NOT NULL DEFAULT GETDATE(),
-    UltimoLogin     DATETIME NULL
-);
+/****** Object:  StoredProcedure [dbo].[sp_Login]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
 GO
-
-CREATE TABLE UsuarioPatente (
-    UsuarioID   INT NOT NULL,
-    PatenteID   INT NOT NULL,
-    PRIMARY KEY (UsuarioID, PatenteID),
-    FOREIGN KEY (UsuarioID) REFERENCES Usuario(UsuarioID) ON DELETE CASCADE,
-    FOREIGN KEY (PatenteID) REFERENCES Patente(PatenteID)
-);
-GO
-
--- ============================================================================
--- 2. CONTROL DE SESIÓN Y BITÁCORA
--- ============================================================================
-
-CREATE TABLE SesionUsuario (
-    SesionID        INT IDENTITY(1,1) PRIMARY KEY,
-    UsuarioID       INT NOT NULL,
-    FechaLogin      DATETIME NOT NULL DEFAULT GETDATE(),
-    FechaLogout     DATETIME NULL,
-    Exitoso         BIT NOT NULL,
-    DireccionIP     VARCHAR(50) NULL,
-    FOREIGN KEY (UsuarioID) REFERENCES Usuario(UsuarioID)
-);
-GO
-
-CREATE TABLE Bitacora (
-    BitacoraID      INT IDENTITY(1,1) PRIMARY KEY,
-    UsuarioID       INT NULL,
-    Fecha           DATETIME NOT NULL DEFAULT GETDATE(),
-    Criticidad      VARCHAR(10) NOT NULL, -- 'Alta', 'Media', 'Baja'
-    Accion          VARCHAR(100) NOT NULL,
-    Descripcion     VARCHAR(500) NOT NULL,
-    FOREIGN KEY (UsuarioID) REFERENCES Usuario(UsuarioID)
-);
-GO
-
--- ============================================================================
--- 3. IDIOMA DINÁMICO
--- ============================================================================
-
-CREATE TABLE Idioma (
-    IdiomaID    INT IDENTITY(1,1) PRIMARY KEY,
-    Codigo      VARCHAR(10) UNIQUE NOT NULL,
-    Nombre      VARCHAR(50) NOT NULL,
-    Activo      BIT NOT NULL DEFAULT 1
-);
-GO
-
-CREATE TABLE Traduccion (
-    TraduccionID    INT IDENTITY(1,1) PRIMARY KEY,
-    IdiomaID        INT NOT NULL,
-    Clave           VARCHAR(100) NOT NULL,
-    Valor           NVARCHAR(255) NOT NULL,
-    FOREIGN KEY (IdiomaID) REFERENCES Idioma(IdiomaID),
-    CONSTRAINT UQ_Traduccion UNIQUE (IdiomaID, Clave)
-);
-GO
-
--- ============================================================================
--- 4. DOMINIO HOTELERO
--- ============================================================================
-
-CREATE TABLE Habitacion (
-    ID_habitacion    INT IDENTITY(1,1) PRIMARY KEY,
-    Numero           INT UNIQUE NOT NULL,
-    TipoHabitacion   CHAR(1) NOT NULL, 
-    PrecioBase       DECIMAL(18,2) NOT NULL,
-    NivelDeServicio  CHAR(1) NOT NULL,
-    Estado           CHAR(1) NOT NULL DEFAULT 'D' 
-);
-GO
-
-CREATE TABLE ServiciosPaquete (
-    ID_Servicio     INT IDENTITY(1,1) PRIMARY KEY,
-    Nombre          VARCHAR(100) NOT NULL,
-    Precio          DECIMAL(18,2) NOT NULL,
-    EsCombo         BIT NOT NULL -- Representa el Composite
-);
-GO
-
-CREATE TABLE Paquete (
-    ID_Paquete      INT NOT NULL,
-    ID_Servicio     INT NOT NULL,
-    Cantidad        INT NOT NULL DEFAULT 1,
-    PrecioUnitario  DECIMAL(18,2) NOT NULL,
-    PRIMARY KEY (ID_Paquete, ID_Servicio),
-    FOREIGN KEY (ID_Paquete)  REFERENCES ServiciosPaquete(ID_Servicio),
-    FOREIGN KEY (ID_Servicio) REFERENCES ServiciosPaquete(ID_Servicio),
-    CONSTRAINT CK_Paquete_NoAutoReferencia CHECK (ID_Paquete <> ID_Servicio)
-);
-GO
-
-CREATE TABLE Huesped (
-    HuespedID   INT IDENTITY(1,1) PRIMARY KEY,
-    Nombre      VARCHAR(100) NOT NULL,
-    Apellido    VARCHAR(100) NOT NULL,
-    DNI         INT UNIQUE NOT NULL,
-    Email       VARCHAR(150) NULL,
-    Telefono    VARCHAR(50) NULL
-);
-GO
-
-CREATE TABLE Reserva (
-    ID_Reserva      INT IDENTITY(1,1) PRIMARY KEY,
-    HuespedID       INT NOT NULL,
-    HabitacionID    INT NOT NULL,
-    FechaCheckIn    DATE NOT NULL,
-    FechaCheckOut   DATE NOT NULL,
-    Estado          VARCHAR(20) NOT NULL DEFAULT 'Confirmada'
-        CONSTRAINT CK_Reserva_Estado CHECK (Estado IN ('Confirmada','EnCurso','Finalizada','Cancelada')), 
-    Total           DECIMAL(18,2) NOT NULL,
-    FOREIGN KEY (HuespedID)    REFERENCES Huesped(HuespedID),
-    FOREIGN KEY (HabitacionID) REFERENCES Habitacion(ID_habitacion)
-);
-GO
-
--- ============================================================================
--- 5. CONSUMOS Y SERVICIOS ADICIONALES
--- ============================================================================
-
-CREATE TABLE ConsumoReserva (
-    ConsumoID       INT IDENTITY(1,1) PRIMARY KEY,
-    ID_Reserva      INT NOT NULL,
-    ID_Servicio     INT NOT NULL,
-    Cantidad        INT NOT NULL DEFAULT 1,
-    PrecioUnitario  DECIMAL(18,2) NOT NULL,
-    FOREIGN KEY (ID_Reserva)  REFERENCES Reserva(ID_Reserva),
-    FOREIGN KEY (ID_Servicio) REFERENCES ServiciosPaquete(ID_Servicio)
-);
-GO
-
-CREATE TABLE ServicioLimpieza (
-    AlertaID         INT IDENTITY(1,1) PRIMARY KEY,
-    HabitacionID     INT NOT NULL,
-    FechaHora        DATETIME NOT NULL DEFAULT GETDATE(),
-    Prioridad        VARCHAR(20) NOT NULL DEFAULT 'Normal',
-    Atendida         BIT NOT NULL DEFAULT 0,
-    UsuarioAtendioID INT NULL,
-    FOREIGN KEY (HabitacionID)     REFERENCES Habitacion(ID_habitacion),
-    FOREIGN KEY (UsuarioAtendioID) REFERENCES Usuario(UsuarioID)
-);
-GO
-
--- ============================================================================
--- 6. ÍNDICES DE APOYO Y OPTIMIZACIÓN
--- ============================================================================
-CREATE INDEX IX_Reserva_FechaCheckIn  ON Reserva(FechaCheckIn);
-CREATE INDEX IX_Reserva_Estado        ON Reserva(Estado);
-CREATE INDEX IX_Bitacora_Fecha        ON Bitacora(Fecha);
-CREATE INDEX IX_Bitacora_Criticidad   ON Bitacora(Criticidad);
+SET QUOTED_IDENTIFIER ON
 GO
 
 -- ============================================================================
 -- 7. PROCEDIMIENTOS ALMACENADOS TRANSACCIONALES
 -- ============================================================================
 
-CREATE PROCEDURE sp_Login
+CREATE PROCEDURE [dbo].[sp_Login]
     @NombreUsuario  VARCHAR(50),
     @PasswordHash   VARBINARY(64),
     @DireccionIP    VARCHAR(50)
@@ -230,31 +449,16 @@ BEGIN
     INSERT INTO Bitacora (UsuarioID, Criticidad, Accion, Descripcion)
     VALUES (@UsuarioID, 'Baja', 'LOGIN', 'Inicio de sesion exitoso.');
 
-    SELECT UsuarioID, NombreUsuario, NombreCompleto, IdiomaPreferido FROM Usuario WHERE UsuarioID = @UsuarioID;
+    SELECT UsuarioID, NombreUsuario, NombreCompleto,Email,IdiomaPreferido FROM Usuario WHERE UsuarioID = @UsuarioID;
 END;
 GO
-
-CREATE PROCEDURE sp_RegistrarUsuario
-    @NombreUsuario  VARCHAR(50),
-    @PasswordHash   VARBINARY(64),
-    @NombreCompleto VARCHAR(150),
-    @Email          VARCHAR(150),
-    @IdiomaPreferido VARCHAR(10)
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    IF EXISTS (SELECT 1 FROM Usuario WHERE NombreUsuario = @NombreUsuario)
-    BEGIN
-        THROW 52002, 'El nombre de usuario ya está registrado. Elegí otro.', 1;
-    END
-
-    INSERT INTO Usuario (NombreUsuario, PasswordHash, NombreCompleto, Email, IdiomaPreferido, Activo, FechaCreacion)
-    VALUES (@NombreUsuario, @PasswordHash, @NombreCompleto, @Email, ISNULL(@IdiomaPreferido, 'ES'), 1, GETDATE());
-END;
+/****** Object:  StoredProcedure [dbo].[sp_Logout]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE sp_Logout
+CREATE PROCEDURE [dbo].[sp_Logout]
     @SesionID INT,
     @UsuarioID INT
 AS
@@ -272,8 +476,45 @@ BEGIN
     END CATCH
 END;
 GO
+/****** Object:  StoredProcedure [dbo].[sp_RegistrarCheckOut]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
-CREATE PROCEDURE sp_RegistrarReserva
+CREATE PROCEDURE [dbo].[sp_RegistrarCheckOut]
+    @ReservaID      INT,
+    @HabitacionID   INT,
+    @UsuarioAccionID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        UPDATE Reserva SET Estado = 'Finalizada' WHERE ID_Reserva = @ReservaID;
+        UPDATE Habitacion SET Estado = 'D' WHERE ID_habitacion = @HabitacionID;
+
+        -- Genera la alerta mediante patrón Observer
+        INSERT INTO ServicioLimpieza (HabitacionID, Prioridad) VALUES (@HabitacionID, 'Normal');
+
+        INSERT INTO Bitacora (UsuarioID, Criticidad, Accion, Descripcion)
+        VALUES (@UsuarioAccionID, 'Media', 'CHECKOUT', 'Check-out de la reserva #' + CAST(@ReservaID AS VARCHAR(10)) + '.');
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW 50005, 'Error al registrar el check-out.', 1;
+    END CATCH
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_RegistrarReserva]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_RegistrarReserva]
     @HuespedID      INT,
     @HabitacionID   INT,
     @FechaCheckIn   DATE,
@@ -307,68 +548,38 @@ BEGIN
     END CATCH
 END;
 GO
+/****** Object:  StoredProcedure [dbo].[sp_RegistrarUsuario]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
 
-CREATE PROCEDURE sp_RegistrarCheckOut
-    @ReservaID      INT,
-    @HabitacionID   INT,
-    @UsuarioAccionID INT
+CREATE PROCEDURE [dbo].[sp_RegistrarUsuario]
+    @NombreUsuario  VARCHAR(50),
+    @PasswordHash   VARBINARY(64),
+    @NombreCompleto VARCHAR(150),
+    @Email          VARCHAR(150),
+    @IdiomaPreferido VARCHAR(10)
 AS
 BEGIN
     SET NOCOUNT ON;
-    BEGIN TRANSACTION;
-    BEGIN TRY
-        UPDATE Reserva SET Estado = 'Finalizada' WHERE ID_Reserva = @ReservaID;
-        UPDATE Habitacion SET Estado = 'D' WHERE ID_habitacion = @HabitacionID;
 
-        -- Genera la alerta mediante patrón Observer
-        INSERT INTO ServicioLimpieza (HabitacionID, Prioridad) VALUES (@HabitacionID, 'Normal');
+    IF EXISTS (SELECT 1 FROM Usuario WHERE NombreUsuario = @NombreUsuario)
+    BEGIN
+        THROW 52002, 'El nombre de usuario ya está registrado. Elegí otro.', 1;
+    END
 
-        INSERT INTO Bitacora (UsuarioID, Criticidad, Accion, Descripcion)
-        VALUES (@UsuarioAccionID, 'Media', 'CHECKOUT', 'Check-out de la reserva #' + CAST(@ReservaID AS VARCHAR(10)) + '.');
-
-        COMMIT TRANSACTION;
-    END TRY
-    BEGIN CATCH
-        ROLLBACK TRANSACTION;
-        THROW 50005, 'Error al registrar el check-out.', 1;
-    END CATCH
+    INSERT INTO Usuario (NombreUsuario, PasswordHash, NombreCompleto, Email, IdiomaPreferido, Activo, FechaCreacion)
+    VALUES (@NombreUsuario, @PasswordHash, @NombreCompleto, @Email, ISNULL(@IdiomaPreferido, 'ES'), 1, GETDATE());
 END;
 GO
-
-CREATE PROCEDURE sp_AtenderServicioLimpieza
-    @AlertaID   INT,
-    @UsuarioID  INT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    BEGIN TRANSACTION;
-    BEGIN TRY
-        UPDATE ServicioLimpieza
-        SET Atendida = 1, UsuarioAtendioID = @UsuarioID
-        WHERE AlertaID = @AlertaID;
-
-        INSERT INTO Bitacora (UsuarioID, Criticidad, Accion, Descripcion)
-        VALUES (@UsuarioID, 'Baja', 'LIMPIEZA_ATENDIDA', 'Servicio de limpieza #' + CAST(@AlertaID AS VARCHAR(10)) + ' atendido.');
-
-        COMMIT TRANSACTION;
-    END TRY
-    BEGIN CATCH
-        ROLLBACK TRANSACTION;
-        THROW 52012, 'Error al marcar el servicio de limpieza.', 1;
-    END CATCH
-END;
+/****** Object:  StoredProcedure [dbo].[sp_RestoreBaseDatos]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE sp_BackupBaseDatos
-    @RutaArchivo VARCHAR(260)
-AS
-BEGIN
-    SET NOCOUNT ON;
-    BACKUP DATABASE StayEasyDB TO DISK = @RutaArchivo WITH FORMAT, INIT, NAME = 'Backup completo de StayEasyDB';
-END;
-GO
-
-CREATE PROCEDURE sp_RestoreBaseDatos
+CREATE PROCEDURE [dbo].[sp_RestoreBaseDatos]
     @RutaArchivo VARCHAR(260)
 AS
 BEGIN
@@ -377,13 +588,4 @@ BEGIN
     RESTORE DATABASE StayEasyDB FROM DISK = @RutaArchivo WITH REPLACE;
     ALTER DATABASE StayEasyDB SET MULTI_USER;
 END;
-GO
-
--- ============================================================================
--- 8. DATOS INICIALES MÍNIMOS
--- ============================================================================
-INSERT INTO Idioma (Codigo, Nombre) VALUES ('ES', 'Español'), ('EN', 'English');
-GO
-
-INSERT INTO Patente (Nombre, Descripcion, EsFamilia) VALUES ('Administrador', 'Acceso total al sistema', 1);
 GO
