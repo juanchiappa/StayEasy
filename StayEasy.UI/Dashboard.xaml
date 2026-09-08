@@ -423,7 +423,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0" Width="34" Height="34" CornerRadius="17" Background="#E4E4E4">
-                            <TextBlock Text="MR" FontSize="12" FontWeight="SemiBold" Foreground="#5C5C5C"
+                            <TextBlock x:Name="Lbl_iniciales" FontSize="12" FontWeight="SemiBold" Foreground="#5C5C5C"
                                        HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
