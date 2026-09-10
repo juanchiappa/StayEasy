@@ -78,5 +78,39 @@ namespace StayEasy.DAL.Registro
                 }
             }
         }
+        public DataTable Leer(string storedProcedure, Hashtable parametros)
+        {
+            using (SqlConnection conexion = new SqlConnection(_connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(storedProcedure, conexion))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    // Si hay parámetros, los agregamos al comando
+                    if (parametros != null)
+                    {
+                        foreach (DictionaryEntry param in parametros)
+                        {
+                            cmd.Parameters.AddWithValue(param.Key.ToString(), param.Value);
+                        }
+                    }
+
+                    try
+                    {
+                        // Usamos SqlDataAdapter para llenar el DataTable automáticamente
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+
+                        return dt;
+                    }
+                    catch (SqlException ex)
+                    {
+                        // Puedes adaptar el manejo de errores según tus códigos específicos
+                        throw new Exception($"Error de base de datos en lectura: {ex.Message}", ex);
+                    }
+                }
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace StayEasy.Seguridad.Entidades
         public int ID { get; set; }
         public string Email { get; set; }
         public string token { get; set; }
+        
         public DateTime TiempoDeExpiracion { get; set; }
 
     }

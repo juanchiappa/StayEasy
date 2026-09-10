@@ -307,36 +307,65 @@
                 <!-- ========== Formulario ========== -->
                 <Border Grid.Column="1" Background="{StaticResource Login.Brush.Card}"
                         CornerRadius="24" Padding="44,48" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="10,0,10,0">
+
                     <StackPanel VerticalAlignment="Center">
 
                         <TextBlock Text="¡Recupera tu contraseña!" Style="{StaticResource Login.Text.Heading}" />
                         <TextBlock Text="Ingresá tu mail para recuperar la contraseña."
                                    Style="{StaticResource Login.Text.Body}" Margin="0,8,0,0" />
 
-                        <!-- Email -->
-                        <TextBlock x:Name="lbl_Email" Text="Email" Style="{StaticResource Login.Text.Label}" Margin="0,26,0,8" />
-                        <Border Style="{StaticResource Login.FieldShell}">
-                            <Grid>
-                                <TextBlock x:Name="Ph_Usuario" Text="Ingresá tu Mail"
-                                           Style="{StaticResource Login.Placeholder}" />
-                                <TextBox x:Name="Txt_Usuario" Style="{StaticResource Login.FieldInput}"
-                                         TabIndex="1" />
-                            </Grid>
-                        </Border>
+                        <!-- ================= PASO 1: Solicitar Token ================= -->
+                        <StackPanel x:Name="PanelPaso1" Visibility="Visible">
 
-                        <!-- Token -->
-                        <TextBlock x:Name="lbl_Token" Text="Token" Style="{StaticResource Login.Text.Label}" Margin="0,26,0,8" Visibility="Collapsed" />
-                        <Border Style="{StaticResource Login.FieldShell}" Visibility="Collapsed">
-                            <Grid>
-                                <TextBlock x:Name="Ph_Token" Text="Ingresá tu Token"
-                                   Style="{StaticResource Login.Placeholder}" />
-                                <TextBox x:Name="Txt_Token" Style="{StaticResource Login.FieldInput}"
-                                 TabIndex="1" />
-                            </Grid>
-                        </Border>
+                            <!-- Email -->
+                            <TextBlock x:Name="lbl_Email" Text="Email" Style="{StaticResource Login.Text.Label}" Margin="0,26,0,8" />
+                            <Border Style="{StaticResource Login.FieldShell}">
+                                <Grid>
+                                    <TextBlock x:Name="Ph_Mail" Text="Ingresá tu Mail"
+                                               Style="{StaticResource Login.Placeholder}" />
+                                    <!-- Tip: Deberás manejar el evento TextChanged en C# para ocultar Ph_Mail cuando el usuario escriba -->
+                                    <TextBox x:Name="Txt_Mail" Style="{StaticResource Login.FieldInput}" TabIndex="1" />
+                                </Grid>
+                            </Border>
+
+                            <!-- Botón Solicitar -->
+                            <Button x:Name="Btn_SolicitarToken" Content="Solicitar Token" 
+                                    Style="{StaticResource Login.Button.Primary}"
+                                    Margin="0,26,0,0" IsDefault="True" TabIndex="2" Click="Btn_SolicitarToken_Click" />
+                        </StackPanel>
 
 
-                        <!-- Mensaje de error -->
+                        <!-- ================= PASO 2: Ingresar Token y Nueva Clave ================= -->
+                        <StackPanel x:Name="PanelPaso2" Visibility="Collapsed">
+
+                            <!-- Token -->
+                            <TextBlock x:Name="lbl_Token" Text="Token" Style="{StaticResource Login.Text.Label}" Margin="0,26,0,8" />
+                            <Border Style="{StaticResource Login.FieldShell}">
+                                <Grid>
+                                    <TextBlock x:Name="Ph_Token" Text="Ingresá tu Token"
+                                               Style="{StaticResource Login.Placeholder}" />
+                                    <TextBox x:Name="Txt_Token" Style="{StaticResource Login.FieldInput}" TabIndex="3" />
+                                </Grid>
+                            </Border>
+
+                            <!-- NUEVO: Campo para la nueva contraseña -->
+                            <TextBlock x:Name="lbl_NuevaClave" Text="Nueva Contraseña" Style="{StaticResource Login.Text.Label}" Margin="0,16,0,8" />
+                            <Border Style="{StaticResource Login.FieldShell}">
+                                <Grid>
+                                    <TextBlock x:Name="Ph_NuevaClave" Text="Ingresá tu nueva clave"
+                                               Style="{StaticResource Login.Placeholder}" />
+                                    <PasswordBox x:Name="Txt_NuevaClave" Style="{StaticResource Login.FieldPassword}" TabIndex="4" />
+                                </Grid>
+                            </Border>
+
+                            <!-- Botón Restablecer -->
+                            <Button x:Name="Btn_RestablecerToken" Content="Restablecer Contraseña" 
+                                    Style="{StaticResource Login.Button.Primary}"
+                                    Margin="0,26,0,0" IsDefault="True" TabIndex="5" Click="Btn_RestablecerToken_Click" />
+                        </StackPanel>
+
+
+                        <!-- ================= Mensaje de Error Global ================= -->
                         <Border x:Name="Pnl_Error" Margin="0,16,0,0" Padding="14,10"
                                 CornerRadius="12" Background="#F4F4F4" BorderBrush="#E0E0E0"
                                 BorderThickness="1" Visibility="Collapsed">
@@ -345,10 +374,6 @@
                                        TextWrapping="Wrap" />
                         </Border>
 
-                        <!-- Acción primaria -->
-                        <Button x:Name="Btn_SolicitarToken" Content="Solicitar Token"
-                                Style="{StaticResource Login.Button.Primary}"
-                                Margin="0,26,0,0" IsDefault="True" TabIndex="5" Click="Btn_SolicitarToken_Click" />
                     </StackPanel>
                 </Border>
 
