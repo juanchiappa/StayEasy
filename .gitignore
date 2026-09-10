@@ -483,3 +483,5 @@ $RECYCLE.BIN/
 
 # Backups de bases de datos SQL Server
 *.bak
+# Credenciales privadas 
+*secrets.config.xml
