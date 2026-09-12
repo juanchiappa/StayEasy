@@ -486,6 +486,19 @@
                                 </Grid>
                             </Border>
 
+                            <!-- ==================== DNI (solo alta de Huésped) ====================
+                                 Visible cuando el correo NO es del dominio corporativo. Es el dato
+                                 obligatorio/único que exige la tabla Huesped para el autorregistro. -->
+                            <TextBlock x:Name="txt_dni" Text="DNI" Style="{StaticResource Rg.FieldLabel}" Margin="0,15,0,7" Visibility="Collapsed" />
+                            <Border x:Name="Shell_DNI" Style="{StaticResource Rg.FieldShell}" Visibility="Collapsed">
+                                <Grid>
+                                    <TextBlock x:Name="Ph_DNI" Text="30123456"
+                                               Style="{StaticResource Rg.Placeholder}" />
+                                    <TextBox x:Name="Txt_DNI" Style="{StaticResource Rg.Input}" TabIndex="5"
+                                             MaxLength="9" />
+                                </Grid>
+                            </Border>
+
                             <!-- ==================== Rol ==================== -->
                             <TextBlock x:Name="txt_rol" Text="Rol" Style="{StaticResource Rg.FieldLabel}" Margin="0,15,0,7" Visibility="Collapsed" />
                             <StackPanel Orientation="Horizontal">

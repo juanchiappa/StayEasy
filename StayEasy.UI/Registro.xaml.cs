@@ -20,7 +20,12 @@ namespace StayEasy.UI
             InitializeComponent();
             SetupEventHandlers();
         }
+
+        // Personal interno (Administración / Recepción / Limpieza)
         UsuarioSeguridadBLL usuario = new UsuarioSeguridadBLL();
+
+        // Huésped autogestionado (correo fuera del dominio corporativo)
+        HuespedBLL huespedBLL = new HuespedBLL();
 
         private void SetupEventHandlers()
         {
@@ -48,6 +53,14 @@ namespace StayEasy.UI
                     ? Visibility.Visible : Visibility.Collapsed;
                 ValidateUsername();
             };
+
+            Txt_DNI.TextChanged += (s, e) =>
+            {
+                Ph_DNI.Visibility = string.IsNullOrEmpty(Txt_DNI.Text)
+                    ? Visibility.Visible : Visibility.Collapsed;
+                ValidateForm();
+            };
+
             Txt_Correo.TextChanged += Txt_Correo_TextChanged;
             Pwd_Password.PasswordChanged += Pwd_Password_PasswordChanged;
             Txt_PasswordVisible.TextChanged += Txt_PasswordVisible_TextChanged;
@@ -397,6 +410,15 @@ namespace StayEasy.UI
             ValidateForm();
         }
 
+        /// <summary>
+        /// Es la misma condición que decide qué rama del formulario mostrar
+        /// (roles internos vs. DNI de huésped): correo del dominio corporativo.
+        /// </summary>
+        private bool EsCorreoCorporativo()
+        {
+            return txt_rol.Visibility == Visibility.Visible;
+        }
+
         private void ValidateForm()
         {
             bool isValid = true;
@@ -417,22 +439,61 @@ namespace StayEasy.UI
             if (Chk_Terminos.IsChecked != true)
                 isValid = false;
 
+            // Autogestión de Huésped: el DNI es obligatorio y debe ser numérico
+            if (!EsCorreoCorporativo())
+            {
+                if (!int.TryParse(Txt_DNI.Text, out int dniIngresado) || dniIngresado <= 0)
+                    isValid = false;
+            }
+
             Btn_CrearCuenta.IsEnabled = isValid;
         }
 
         private void Btn_CrearCuenta_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(
-                "Cuenta creada exitosamente. Esperá la confirmación del administrador.",
-                "Registro exitoso",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            try
+            {
+                if (EsCorreoCorporativo())
+                {
+                    // Alta de personal interno (Administración / Recepción / Limpieza)
+                    string nombreCompleto = Txt_Nombre.Text + " " + Txt_Apellido.Text;
+                    usuario.Registrar(Txt_Usuario.Text, GetPassword(), nombreCompleto, Txt_Correo.Text);
 
-            string nombreCompleto = Txt_Nombre.Text + " " + Txt_Apellido.Text;
-            usuario.Registrar(Txt_Usuario.Text, GetPassword(), nombreCompleto, Txt_Correo.Text);
-            var login = new Login();
-            login.Show();
-            this.Close();
+                    MessageBox.Show(
+                        "Cuenta creada exitosamente. Esperá la confirmación del administrador.",
+                        "Registro exitoso",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+                else
+                {
+                    // Autorregistro de Huésped
+                    int dni = int.Parse(Txt_DNI.Text);
+
+                    huespedBLL.RegistrarHuesped(
+                        Txt_Nombre.Text,
+                        Txt_Apellido.Text,
+                        dni,
+                        Txt_Correo.Text,
+                        telefono: null,
+                        nombreUsuario: Txt_Usuario.Text,
+                        passwordPlana: GetPassword());
+
+                    MessageBox.Show(
+                        "¡Cuenta creada! Ya podés iniciar sesión y gestionar tu estadía.",
+                        "Registro exitoso",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+
+                var login = new Login();
+                login.Show();
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "No se pudo crear la cuenta", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void Btn_IniciarSesion_Click(object sender, RoutedEventArgs e)
@@ -451,24 +512,25 @@ namespace StayEasy.UI
             string username = Txt_Correo.Text;
             int indice = username.IndexOf('@');
 
+            bool esCorporativo = false;
+
             if (indice != -1)
             {
                 string resultado = username.Substring(indice + 1);
-                if (resultado == "stayeasy.enterprise.com.ar")
-                {
-                    txt_rol.Visibility = Visibility.Visible;
-                    Rol_Administracion.Visibility = Visibility.Visible;
-                    Rol_Limpieza.Visibility = Visibility.Visible;
-                    Rol_Recepcion.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    txt_rol.Visibility = Visibility.Collapsed;
-                    Rol_Administracion.Visibility = Visibility.Collapsed;
-                    Rol_Limpieza.Visibility = Visibility.Collapsed;
-                    Rol_Recepcion.Visibility = Visibility.Collapsed;
-                }
+                esCorporativo = resultado == "stayeasy.enterprise.com.ar";
             }
+
+            // Rama personal interno
+            txt_rol.Visibility = esCorporativo ? Visibility.Visible : Visibility.Collapsed;
+            Rol_Administracion.Visibility = esCorporativo ? Visibility.Visible : Visibility.Collapsed;
+            Rol_Limpieza.Visibility = esCorporativo ? Visibility.Visible : Visibility.Collapsed;
+            Rol_Recepcion.Visibility = esCorporativo ? Visibility.Visible : Visibility.Collapsed;
+
+            // Rama Huésped (inversa a la de personal interno)
+            txt_dni.Visibility = esCorporativo ? Visibility.Collapsed : Visibility.Visible;
+            Shell_DNI.Visibility = esCorporativo ? Visibility.Collapsed : Visibility.Visible;
+
+            ValidateForm();
         }
     }
 }
