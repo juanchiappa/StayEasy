@@ -69,6 +69,7 @@ CREATE TABLE [dbo].[Huesped](
 	[DNI] [int] NOT NULL,
 	[Email] [varchar](150) NULL,
 	[Telefono] [varchar](50) NULL,
+	[UsuarioID] [int] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[HuespedID] ASC
@@ -317,6 +318,9 @@ GO
 ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
 REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
 GO
+ALTER TABLE [dbo].[Huesped]  WITH CHECK ADD CONSTRAINT [FK_Huesped_Usuario] FOREIGN KEY([UsuarioID])
+REFERENCES [dbo].[Usuario] ([UsuarioID])
+GO
 ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Paquete])
 REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
 GO
@@ -361,6 +365,18 @@ GO
 ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD  CONSTRAINT [CK_Reserva_Estado] CHECK  (([Estado]='Cancelada' OR [Estado]='Finalizada' OR [Estado]='EnCurso' OR [Estado]='Confirmada'))
 GO
 ALTER TABLE [dbo].[Reserva] CHECK CONSTRAINT [CK_Reserva_Estado]
+GO
+-- ============================================================================
+-- 6. DATOS INICIALES (SEED)
+-- ============================================================================
+-- Patente-Familia "Huesped": rol de autogestion para huespedes registrados
+-- desde la app (patron Composite). Se usa sin tilde para ser consistente
+-- con el enum Rol de StayEasy.BE y evitar problemas de collation en varchar.
+IF NOT EXISTS (SELECT 1 FROM [dbo].[Patente] WHERE [Nombre] = 'Huesped' AND [EsFamilia] = 1)
+BEGIN
+    INSERT INTO [dbo].[Patente] ([Nombre], [Descripcion], [EsFamilia])
+    VALUES ('Huesped', 'Rol de autogestion para huespedes registrados desde la app.', 1);
+END
 GO
 /****** Object:  StoredProcedure [dbo].[sp_AtenderServicioLimpieza]    Script Date: 08/09/2026 09:57:00 ******/
 SET ANSI_NULLS ON
@@ -571,6 +587,88 @@ BEGIN
 
     INSERT INTO Usuario (NombreUsuario, PasswordHash, NombreCompleto, Email, IdiomaPreferido, Activo, FechaCreacion)
     VALUES (@NombreUsuario, @PasswordHash, @NombreCompleto, @Email, ISNULL(@IdiomaPreferido, 'ES'), 1, GETDATE());
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[sp_RegistrarUsuarioHuesped]    Script Date: 08/09/2026 09:57:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Autorregistro del Huesped como actor directo del sistema: da de alta el
+-- Usuario (Seguridad), le asigna la Patente-Familia "Huesped" y crea el
+-- registro de Huesped (Dominio) enlazado, todo dentro de una unica transaccion.
+CREATE PROCEDURE [dbo].[sp_RegistrarUsuarioHuesped]
+    @NombreUsuario  VARCHAR(50),
+    @PasswordHash   VARBINARY(64),
+    @Nombre         VARCHAR(100),
+    @Apellido       VARCHAR(100),
+    @DNI            INT,
+    @Email          VARCHAR(150),
+    @Telefono       VARCHAR(50) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @NuevoUsuarioID INT;
+    DECLARE @NuevoHuespedID INT;
+    DECLARE @PatenteHuespedID INT;
+
+    BEGIN TRANSACTION;
+    BEGIN TRY
+
+        -- Validaciones de negocio previas al INSERT (mismo estilo que sp_RegistrarUsuario)
+        IF EXISTS (SELECT 1 FROM Usuario WHERE NombreUsuario = @NombreUsuario)
+        BEGIN
+            THROW 52020, 'El nombre de usuario ya esta registrado. Elegi otro.', 1;
+        END
+
+        IF EXISTS (SELECT 1 FROM Huesped WHERE DNI = @DNI)
+        BEGIN
+            THROW 52021, 'Ya existe un huesped registrado con ese DNI.', 1;
+        END
+
+        -- 1) Alta de Usuario (Seguridad). IdiomaPreferido, Activo y FechaCreacion
+        --    toman sus valores DEFAULT ya definidos en la tabla.
+        INSERT INTO Usuario (NombreUsuario, PasswordHash, NombreCompleto, Email)
+        VALUES (@NombreUsuario, @PasswordHash, @Nombre + ' ' + @Apellido, @Email);
+
+        SET @NuevoUsuarioID = SCOPE_IDENTITY();
+
+        -- 2) Asignacion del rol "Huesped" (patron Composite -> UsuarioPatente)
+        SELECT @PatenteHuespedID = PatenteID
+        FROM Patente
+        WHERE Nombre = 'Huesped' AND EsFamilia = 1;
+
+        IF @PatenteHuespedID IS NULL
+        BEGIN
+            THROW 52022, 'No se encuentra configurada la Patente Huesped.', 1;
+        END
+
+        INSERT INTO UsuarioPatente (UsuarioID, PatenteID)
+        VALUES (@NuevoUsuarioID, @PatenteHuespedID);
+
+        -- 3) Alta de Huesped (Dominio) enlazado al Usuario recien creado
+        INSERT INTO Huesped (Nombre, Apellido, DNI, Email, Telefono, UsuarioID)
+        VALUES (@Nombre, @Apellido, @DNI, @Email, @Telefono, @NuevoUsuarioID);
+
+        SET @NuevoHuespedID = SCOPE_IDENTITY();
+
+        -- 4) Bitacora, igual que el resto de los SP transaccionales del sistema
+        INSERT INTO Bitacora (UsuarioID, Criticidad, Accion, Descripcion)
+        VALUES (@NuevoUsuarioID, 'Media', 'REGISTRO_HUESPED',
+                'Autorregistro de huesped #' + CAST(@NuevoHuespedID AS VARCHAR(10)) + ' con usuario "' + @NombreUsuario + '".');
+
+        COMMIT TRANSACTION;
+
+        -- EscribirEscalar (AccesoDatos) hace ExecuteScalar: se devuelve el HuespedID nuevo
+        SELECT @NuevoHuespedID AS HuespedID;
+
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END;
 GO
 /****** Object:  StoredProcedure [dbo].[sp_RestoreBaseDatos]    Script Date: 08/09/2026 09:57:00 ******/
