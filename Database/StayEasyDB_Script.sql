@@ -1,12 +1,12 @@
 USE [master]
 GO
-/****** Objeto: Database [StayEasyDB] Fecha de script: 14/09/2026 22:14:44 ******/
+/****** Object:  Database [StayEasyDB]    Script Date: 15/09/2026 10:11:37 ******/
 CREATE DATABASE [StayEasyDB]
  CONTAINMENT = NONE
  ON  PRIMARY 
-( NAME = N'StayEasyDB', FILENAME = N'E:\Program Files\Microsoft SQL Server\MSSQL16.SQLEXPRESS\MSSQL\DATA\StayEasyDB.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+( NAME = N'StayEasyDB', FILENAME = N'C:\Users\leand\StayEasyDB.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
  LOG ON 
-( NAME = N'StayEasyDB_log', FILENAME = N'E:\Program Files\Microsoft SQL Server\MSSQL16.SQLEXPRESS\MSSQL\DATA\StayEasyDB_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+( NAME = N'StayEasyDB_log', FILENAME = N'C:\Users\leand\StayEasyDB_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
  WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
 GO
 ALTER DATABASE [StayEasyDB] SET COMPATIBILITY_LEVEL = 160
@@ -74,6 +74,8 @@ ALTER DATABASE [StayEasyDB] SET TARGET_RECOVERY_TIME = 60 SECONDS
 GO
 ALTER DATABASE [StayEasyDB] SET DELAYED_DURABILITY = DISABLED 
 GO
+ALTER DATABASE [StayEasyDB] SET OPTIMIZED_LOCKING = OFF 
+GO
 ALTER DATABASE [StayEasyDB] SET ACCELERATED_DATABASE_RECOVERY = OFF  
 GO
 ALTER DATABASE [StayEasyDB] SET QUERY_STORE = ON
@@ -82,7 +84,7 @@ ALTER DATABASE [StayEasyDB] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANU
 GO
 USE [StayEasyDB]
 GO
-/****** Objeto: Table [dbo].[Reserva] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[Reserva]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -101,7 +103,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: UserDefinedFunction [dbo].[fn_ReservasEnConflicto] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  UserDefinedFunction [dbo].[fn_ReservasEnConflicto]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -148,7 +150,7 @@ RETURN
 );
 
 GO
-/****** Objeto: Table [dbo].[Bitacora] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[Bitacora]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -166,7 +168,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[ConsumoReserva] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[ConsumoReserva]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -183,7 +185,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[Habitacion] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[Habitacion]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -205,7 +207,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[Huesped] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[Huesped]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -228,7 +230,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[Idioma] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[Idioma]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -248,7 +250,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[Paquete] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[Paquete]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -265,7 +267,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[Patente] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[Patente]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -281,7 +283,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[PatenteJerarquia] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[PatenteJerarquia]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -296,7 +298,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[ServicioLimpieza] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[ServicioLimpieza]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -314,7 +316,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[ServiciosPaquete] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[ServiciosPaquete]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -330,7 +332,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[SesionUsuario] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[SesionUsuario]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -348,7 +350,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[TokensRecuperacion] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[TokensRecuperacion]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -364,7 +366,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[Traduccion] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[Traduccion]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -385,7 +387,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[Usuario] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[Usuario]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -410,7 +412,7 @@ UNIQUE NONCLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Objeto: Table [dbo].[UsuarioPatente] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Table [dbo].[UsuarioPatente]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -427,13 +429,13 @@ PRIMARY KEY CLUSTERED
 GO
 SET ANSI_PADDING ON
 GO
-/****** Objeto: Index [IX_Bitacora_Criticidad] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Index [IX_Bitacora_Criticidad]    Script Date: 15/09/2026 10:11:37 ******/
 CREATE NONCLUSTERED INDEX [IX_Bitacora_Criticidad] ON [dbo].[Bitacora]
 (
 	[Criticidad] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Objeto: Index [IX_Bitacora_Fecha] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Index [IX_Bitacora_Fecha]    Script Date: 15/09/2026 10:11:37 ******/
 CREATE NONCLUSTERED INDEX [IX_Bitacora_Fecha] ON [dbo].[Bitacora]
 (
 	[Fecha] ASC
@@ -441,19 +443,19 @@ CREATE NONCLUSTERED INDEX [IX_Bitacora_Fecha] ON [dbo].[Bitacora]
 GO
 SET ANSI_PADDING ON
 GO
-/****** Objeto: Index [IX_Reserva_Estado] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Index [IX_Reserva_Estado]    Script Date: 15/09/2026 10:11:37 ******/
 CREATE NONCLUSTERED INDEX [IX_Reserva_Estado] ON [dbo].[Reserva]
 (
 	[Estado] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Objeto: Index [IX_Reserva_FechaCheckIn] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Index [IX_Reserva_FechaCheckIn]    Script Date: 15/09/2026 10:11:37 ******/
 CREATE NONCLUSTERED INDEX [IX_Reserva_FechaCheckIn] ON [dbo].[Reserva]
 (
 	[FechaCheckIn] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 GO
-/****** Objeto: Index [IX_Reserva_Habitacion_Fechas] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  Index [IX_Reserva_Habitacion_Fechas]    Script Date: 15/09/2026 10:11:37 ******/
 CREATE NONCLUSTERED INDEX [IX_Reserva_Habitacion_Fechas] ON [dbo].[Reserva]
 (
 	[HabitacionID] ASC,
@@ -496,11 +498,29 @@ GO
 ALTER TABLE [dbo].[Bitacora]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
 REFERENCES [dbo].[Usuario] ([UsuarioID])
 GO
+ALTER TABLE [dbo].[Bitacora]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
+REFERENCES [dbo].[Usuario] ([UsuarioID])
+GO
+ALTER TABLE [dbo].[Bitacora]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
+REFERENCES [dbo].[Usuario] ([UsuarioID])
+GO
 ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Reserva])
 REFERENCES [dbo].[Reserva] ([ID_Reserva])
 GO
 ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Reserva])
 REFERENCES [dbo].[Reserva] ([ID_Reserva])
+GO
+ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Reserva])
+REFERENCES [dbo].[Reserva] ([ID_Reserva])
+GO
+ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Reserva])
+REFERENCES [dbo].[Reserva] ([ID_Reserva])
+GO
+ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
+REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
+GO
+ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
+REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
 GO
 ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
 REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
@@ -519,6 +539,18 @@ GO
 ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Paquete])
 REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
 GO
+ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Paquete])
+REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
+GO
+ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Paquete])
+REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
+GO
+ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
+REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
+GO
+ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
+REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
+GO
 ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
 REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
 GO
@@ -529,6 +561,18 @@ ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([FamiliaPadreID
 REFERENCES [dbo].[Patente] ([PatenteID])
 GO
 ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([FamiliaPadreID])
+REFERENCES [dbo].[Patente] ([PatenteID])
+GO
+ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([FamiliaPadreID])
+REFERENCES [dbo].[Patente] ([PatenteID])
+GO
+ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([FamiliaPadreID])
+REFERENCES [dbo].[Patente] ([PatenteID])
+GO
+ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([PatenteHijaID])
+REFERENCES [dbo].[Patente] ([PatenteID])
+GO
+ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([PatenteHijaID])
 REFERENCES [dbo].[Patente] ([PatenteID])
 GO
 ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([PatenteHijaID])
@@ -543,11 +587,29 @@ GO
 ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
 REFERENCES [dbo].[Habitacion] ([ID_habitacion])
 GO
+ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
+REFERENCES [dbo].[Habitacion] ([ID_habitacion])
+GO
+ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
+REFERENCES [dbo].[Habitacion] ([ID_habitacion])
+GO
 ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HuespedID])
 REFERENCES [dbo].[Huesped] ([HuespedID])
 GO
 ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HuespedID])
 REFERENCES [dbo].[Huesped] ([HuespedID])
+GO
+ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HuespedID])
+REFERENCES [dbo].[Huesped] ([HuespedID])
+GO
+ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HuespedID])
+REFERENCES [dbo].[Huesped] ([HuespedID])
+GO
+ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
+REFERENCES [dbo].[Habitacion] ([ID_habitacion])
+GO
+ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
+REFERENCES [dbo].[Habitacion] ([ID_habitacion])
 GO
 ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
 REFERENCES [dbo].[Habitacion] ([ID_habitacion])
@@ -561,6 +623,18 @@ GO
 ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([UsuarioAtendioID])
 REFERENCES [dbo].[Usuario] ([UsuarioID])
 GO
+ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([UsuarioAtendioID])
+REFERENCES [dbo].[Usuario] ([UsuarioID])
+GO
+ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([UsuarioAtendioID])
+REFERENCES [dbo].[Usuario] ([UsuarioID])
+GO
+ALTER TABLE [dbo].[SesionUsuario]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
+REFERENCES [dbo].[Usuario] ([UsuarioID])
+GO
+ALTER TABLE [dbo].[SesionUsuario]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
+REFERENCES [dbo].[Usuario] ([UsuarioID])
+GO
 ALTER TABLE [dbo].[SesionUsuario]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
 REFERENCES [dbo].[Usuario] ([UsuarioID])
 GO
@@ -572,6 +646,18 @@ REFERENCES [dbo].[Idioma] ([IdiomaID])
 GO
 ALTER TABLE [dbo].[Traduccion]  WITH CHECK ADD FOREIGN KEY([IdiomaID])
 REFERENCES [dbo].[Idioma] ([IdiomaID])
+GO
+ALTER TABLE [dbo].[Traduccion]  WITH CHECK ADD FOREIGN KEY([IdiomaID])
+REFERENCES [dbo].[Idioma] ([IdiomaID])
+GO
+ALTER TABLE [dbo].[Traduccion]  WITH CHECK ADD FOREIGN KEY([IdiomaID])
+REFERENCES [dbo].[Idioma] ([IdiomaID])
+GO
+ALTER TABLE [dbo].[UsuarioPatente]  WITH CHECK ADD FOREIGN KEY([PatenteID])
+REFERENCES [dbo].[Patente] ([PatenteID])
+GO
+ALTER TABLE [dbo].[UsuarioPatente]  WITH CHECK ADD FOREIGN KEY([PatenteID])
+REFERENCES [dbo].[Patente] ([PatenteID])
 GO
 ALTER TABLE [dbo].[UsuarioPatente]  WITH CHECK ADD FOREIGN KEY([PatenteID])
 REFERENCES [dbo].[Patente] ([PatenteID])
@@ -595,7 +681,7 @@ ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD  CONSTRAINT [CK_Reserva_Estado] CHEC
 GO
 ALTER TABLE [dbo].[Reserva] CHECK CONSTRAINT [CK_Reserva_Estado]
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_ActualizarContrasena] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_ActualizarContrasena]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -611,7 +697,7 @@ BEGIN
     WHERE Email = @Email;
 END
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_AtenderServicioLimpieza] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_AtenderServicioLimpieza]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -670,7 +756,7 @@ BEGIN
 END;
 
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_BackupBaseDatos] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_BackupBaseDatos]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -684,7 +770,7 @@ BEGIN
     BACKUP DATABASE StayEasyDB TO DISK = @RutaArchivo WITH FORMAT, INIT, NAME = 'Backup completo de StayEasyDB';
 END;
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_BuscarHuesped] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_BuscarHuesped]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -716,7 +802,7 @@ BEGIN
     ORDER BY h.Apellido, h.Nombre;
 END;
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_CancelarReserva] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_CancelarReserva]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -766,7 +852,7 @@ BEGIN
 END;
 
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_GuardarToken] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_GuardarToken]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -785,7 +871,7 @@ BEGIN
     SELECT CAST(SCOPE_IDENTITY() AS INT);
 END
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_ListarHabitacionesDisponibles] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_ListarHabitacionesDisponibles]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -835,7 +921,7 @@ BEGIN
 END;
 
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_ListarReservas] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_ListarReservas]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -892,7 +978,7 @@ BEGIN
     OPTION (RECOMPILE);
 END;
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_Login] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_Login]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -939,7 +1025,7 @@ BEGIN
     SELECT UsuarioID, NombreUsuario, NombreCompleto,Email, IdiomaPreferido FROM Usuario WHERE UsuarioID = @UsuarioID;
 END;
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_Logout] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_Logout]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -963,7 +1049,7 @@ BEGIN
     END CATCH
 END;
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_ObtenerReserva] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_ObtenerReserva]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -977,7 +1063,7 @@ BEGIN
     EXEC dbo.sp_ListarReservas @ReservaID = @ReservaID;
 END;
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_RegistrarCheckIn] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_RegistrarCheckIn]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1035,7 +1121,7 @@ BEGIN
 END;
 
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_RegistrarCheckOut] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_RegistrarCheckOut]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1094,7 +1180,7 @@ BEGIN
 END;
 
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_RegistrarReserva] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_RegistrarReserva]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1186,7 +1272,7 @@ BEGIN
 END;
 
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_RegistrarUsuario] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_RegistrarUsuario]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1211,7 +1297,7 @@ BEGIN
     VALUES (@NombreUsuario, @PasswordHash, @NombreCompleto, @Email, ISNULL(@IdiomaPreferido, 'ES'), 1, GETDATE());
 END;
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_RegistrarUsuarioHuesped] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_RegistrarUsuarioHuesped]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1265,7 +1351,7 @@ BEGIN
     END CATCH
 END;
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_RestoreBaseDatos] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_RestoreBaseDatos]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1281,7 +1367,7 @@ BEGIN
     ALTER DATABASE StayEasyDB SET MULTI_USER;
 END;
 GO
-/****** Objeto: StoredProcedure [dbo].[sp_ValidarEmail] Fecha de script: 14/09/2026 22:14:45 ******/
+/****** Object:  StoredProcedure [dbo].[sp_ValidarEmail]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
