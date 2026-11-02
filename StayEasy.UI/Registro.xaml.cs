@@ -1,14 +1,11 @@
-﻿using StayEasy.BLL;
+using StayEasy.BLL;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+using StayEasy.Seguridad.Validaciones;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
 namespace StayEasy.UI
 {
@@ -19,6 +16,8 @@ namespace StayEasy.UI
         {
             InitializeComponent();
             SetupEventHandlers();
+            ActualizarTipoCuenta();
+            ValidateUsername();
         }
 
         // Personal interno (Administración / Recepción / Limpieza)
@@ -29,69 +28,33 @@ namespace StayEasy.UI
 
         private void SetupEventHandlers()
         {
-            // Arrastre desde el panel oscuro (izquierda) - SOLO en áreas no interactivas
             Panel_Arrastre.MouseLeftButtonDown += Panel_Arrastre_MouseLeftButtonDown;
-
-            // Arrastre desde el Grid principal - SOLO en áreas no interactivas
             MainGrid.MouseLeftButtonDown += MainGrid_MouseLeftButtonDown;
 
-            Txt_Nombre.TextChanged += (s, e) =>
-                Ph_Nombre.Visibility = string.IsNullOrEmpty(Txt_Nombre.Text)
-                    ? Visibility.Visible : Visibility.Collapsed;
-
-            Txt_Apellido.TextChanged += (s, e) =>
-                Ph_Apellido.Visibility = string.IsNullOrEmpty(Txt_Apellido.Text)
-                    ? Visibility.Visible : Visibility.Collapsed;
-
-            Txt_Correo.TextChanged += (s, e) =>
-                Ph_Correo.Visibility = string.IsNullOrEmpty(Txt_Correo.Text)
-                    ? Visibility.Visible : Visibility.Collapsed;
-
-            Txt_Usuario.TextChanged += (s, e) =>
+            void Vincular(TextBox entrada, TextBlock placeholder)
             {
-                Ph_Usuario.Visibility = string.IsNullOrEmpty(Txt_Usuario.Text)
-                    ? Visibility.Visible : Visibility.Collapsed;
-                ValidateUsername();
-            };
+                entrada.TextChanged += (_, _) =>
+                {
+                    placeholder.Visibility = entrada.Text.Length == 0 ? Visibility.Visible : Visibility.Collapsed;
+                    ValidateForm();
+                };
+            }
 
-            Txt_DNI.TextChanged += (s, e) =>
-            {
-                Ph_DNI.Visibility = string.IsNullOrEmpty(Txt_DNI.Text)
-                    ? Visibility.Visible : Visibility.Collapsed;
-                ValidateForm();
-            };
-
+            Vincular(Txt_Nombre, Ph_Nombre);
+            Vincular(Txt_Apellido, Ph_Apellido);
+            Vincular(Txt_Correo, Ph_Correo);
+            Vincular(Txt_Usuario, Ph_Usuario);
+            Vincular(Txt_DNI, Ph_DNI);
+            Txt_Usuario.TextChanged += (_, _) => ValidateUsername();
             Txt_Correo.TextChanged += Txt_Correo_TextChanged;
-            Pwd_Password.PasswordChanged += Pwd_Password_PasswordChanged;
-            Txt_PasswordVisible.TextChanged += Txt_PasswordVisible_TextChanged;
-
-            Btn_VerPassword.Checked += (s, e) => MostrarPassword(true);
-            Btn_VerPassword.Unchecked += (s, e) => MostrarPassword(false);
-
-            Pwd_Password2.PasswordChanged += (s, e) =>
+            CampoClave.PasswordChanged += (_, _) =>
             {
-                Ph_Password2.Visibility = string.IsNullOrEmpty(Pwd_Password2.Password)
-                    ? Visibility.Visible : Visibility.Collapsed;
+                IndicadorClave.Actualizar(GetPassword());
                 CheckPasswordMatch();
             };
-            Txt_Password2Visible.TextChanged += (s, e) =>
-            {
-                if (Btn_VerPassword.IsChecked == true)
-                {
-                    Pwd_Password2.Password = Txt_Password2Visible.Text;
-                    Ph_Password2.Visibility = string.IsNullOrEmpty(Txt_Password2Visible.Text)
-                        ? Visibility.Visible : Visibility.Collapsed;
-                    CheckPasswordMatch();
-                }
-            };
-
-            Chk_Terminos.Checked += (s, e) => ValidateForm();
-            Chk_Terminos.Unchecked += (s, e) => ValidateForm();
-
-            Rol_Recepcion.Checked += (s, e) => ValidateForm();
-            Rol_Limpieza.Checked += (s, e) => ValidateForm();
-            Rol_Administracion.Checked += (s, e) => ValidateForm();
-
+            CampoConfirmacion.PasswordChanged += (_, _) => CheckPasswordMatch();
+            Chk_Terminos.Checked += (_, _) => ValidateForm();
+            Chk_Terminos.Unchecked += (_, _) => ValidateForm();
             Btn_CrearCuenta.Click += Btn_CrearCuenta_Click;
             Btn_IniciarSesion.Click += Btn_IniciarSesion_Click;
         }
@@ -181,232 +144,28 @@ namespace StayEasy.UI
             }
         }
 
-        private void Pwd_Password_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-            if (Btn_VerPassword.IsChecked == false)
-            {
-                Ph_Password.Visibility = string.IsNullOrEmpty(Pwd_Password.Password)
-                    ? Visibility.Visible : Visibility.Collapsed;
-            }
-            OnPasswordChanged();
-        }
+        private string GetPassword() { return CampoClave.Password; }
 
-        private void Txt_PasswordVisible_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (Btn_VerPassword.IsChecked == true)
-            {
-                Pwd_Password.Password = Txt_PasswordVisible.Text;
-                Ph_Password.Visibility = string.IsNullOrEmpty(Txt_PasswordVisible.Text)
-                    ? Visibility.Visible : Visibility.Collapsed;
-                OnPasswordChanged();
-            }
-        }
-
-        private void MostrarPassword(bool mostrar)
-        {
-            if (mostrar)
-            {
-                Txt_PasswordVisible.Text = Pwd_Password.Password;
-                Txt_PasswordVisible.Visibility = Visibility.Visible;
-                Pwd_Password.Visibility = Visibility.Collapsed;
-                Ph_Password.Visibility = string.IsNullOrEmpty(Txt_PasswordVisible.Text)
-                    ? Visibility.Visible : Visibility.Collapsed;
-
-                Txt_Password2Visible.Text = Pwd_Password2.Password;
-                Txt_Password2Visible.Visibility = Visibility.Visible;
-                Pwd_Password2.Visibility = Visibility.Collapsed;
-                Ph_Password2.Visibility = string.IsNullOrEmpty(Txt_Password2Visible.Text)
-                    ? Visibility.Visible : Visibility.Collapsed;
-            }
-            else
-            {
-                Pwd_Password.Password = Txt_PasswordVisible.Text;
-                Pwd_Password.Visibility = Visibility.Visible;
-                Txt_PasswordVisible.Visibility = Visibility.Collapsed;
-                Ph_Password.Visibility = string.IsNullOrEmpty(Pwd_Password.Password)
-                    ? Visibility.Visible : Visibility.Collapsed;
-
-                Pwd_Password2.Password = Txt_Password2Visible.Text;
-                Pwd_Password2.Visibility = Visibility.Visible;
-                Txt_Password2Visible.Visibility = Visibility.Collapsed;
-                Ph_Password2.Visibility = string.IsNullOrEmpty(Pwd_Password2.Password)
-                    ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
-        private string GetPassword()
-        {
-            if (Pwd_Password.Visibility == Visibility.Visible)
-                return Pwd_Password.Password;
-            else
-                return Txt_PasswordVisible.Text;
-        }
-
-        private string GetPassword2()
-        {
-            if (Pwd_Password2.Visibility == Visibility.Visible)
-                return Pwd_Password2.Password;
-            else
-                return Txt_Password2Visible.Text;
-        }
+        private string GetPassword2() { return CampoConfirmacion.Password; }
 
         private void ValidateUsername()
         {
-            string username = Txt_Usuario.Text;
-            bool isValid = username.Length >= 3;
-
-            if (isValid)
-            {
-                Chip_Usuario.Background = (Brush)FindResource("Rg.Dark");
-                Lbl_ChipUsuario.Text = "Disponible";
-                Lbl_ChipUsuario.Foreground = (Brush)FindResource("Rg.OnDark");
-            }
-            else
-            {
-                Chip_Usuario.Background = (Brush)FindResource("Rg.Disabled");
-                Lbl_ChipUsuario.Text = "Muy corto";
-                Lbl_ChipUsuario.Foreground = (Brush)FindResource("Rg.TextFaint");
-            }
-
+            bool valido = ValidadorDatos.EsUsuarioValido(Txt_Usuario.Text.Trim());
+            Chip_Usuario.Background = (Brush)FindResource(valido ? "Rg.Dark" : "Rg.Disabled");
+            Lbl_ChipUsuario.Text = valido ? "Formato válido" : "Formato inválido";
+            Lbl_ChipUsuario.Foreground = (Brush)FindResource(valido ? "Rg.OnDark" : "Rg.TextFaint");
             ValidateForm();
-        }
-
-        private void OnPasswordChanged()
-        {
-            string password = GetPassword();
-            UpdatePasswordStrength(password);
-            UpdateRequirements(password);
-            CheckPasswordMatch();
-            ValidateForm();
-        }
-
-        private void UpdatePasswordStrength(string password)
-        {
-            int score = CalculatePasswordStrength(password);
-            string strengthText;
-            SolidColorBrush[] segmentColors = new SolidColorBrush[4];
-            SolidColorBrush defaultSegment = (SolidColorBrush)FindResource("Rg.Track");
-
-            for (int i = 0; i < 4; i++)
-            {
-                segmentColors[i] = defaultSegment;
-            }
-
-            if (string.IsNullOrEmpty(password))
-            {
-                strengthText = "Muy débil";
-                Lbl_Fuerza.Foreground = (Brush)FindResource("Rg.Label");
-            }
-            else if (score <= 1)
-            {
-                strengthText = "Muy débil";
-                segmentColors[0] = new SolidColorBrush(Color.FromRgb(255, 77, 77));
-                Lbl_Fuerza.Foreground = new SolidColorBrush(Color.FromRgb(255, 77, 77));
-            }
-            else if (score == 2)
-            {
-                strengthText = "Débil";
-                segmentColors[0] = segmentColors[1] = new SolidColorBrush(Color.FromRgb(255, 165, 0));
-                Lbl_Fuerza.Foreground = new SolidColorBrush(Color.FromRgb(255, 165, 0));
-            }
-            else if (score == 3)
-            {
-                strengthText = "Media";
-                segmentColors[0] = segmentColors[1] = segmentColors[2] = new SolidColorBrush(Color.FromRgb(255, 205, 0));
-                Lbl_Fuerza.Foreground = new SolidColorBrush(Color.FromRgb(255, 205, 0));
-            }
-            else if (score == 4)
-            {
-                strengthText = "Fuerte";
-                segmentColors[0] = segmentColors[1] = segmentColors[2] = segmentColors[3] = new SolidColorBrush(Color.FromRgb(76, 175, 80));
-                Lbl_Fuerza.Foreground = new SolidColorBrush(Color.FromRgb(76, 175, 80));
-            }
-            else
-            {
-                strengthText = "Muy fuerte";
-                segmentColors[0] = segmentColors[1] = segmentColors[2] = segmentColors[3] = new SolidColorBrush(Color.FromRgb(0, 150, 136));
-                Lbl_Fuerza.Foreground = new SolidColorBrush(Color.FromRgb(0, 150, 136));
-            }
-
-            Lbl_Fuerza.Text = strengthText;
-
-            Seg_1.Background = segmentColors[0];
-            Seg_2.Background = segmentColors[1];
-            Seg_3.Background = segmentColors[2];
-            Seg_4.Background = segmentColors[3];
-        }
-
-        private int CalculatePasswordStrength(string password)
-        {
-            if (string.IsNullOrEmpty(password)) return 0;
-
-            int score = 0;
-
-            if (password.Length >= 8) score++;
-            if (password.Length >= 12) score++;
-            if (Regex.IsMatch(password, "[A-Z]")) score++;
-            if (Regex.IsMatch(password, "[a-z]")) score++;
-            if (Regex.IsMatch(password, "[0-9]")) score++;
-            if (Regex.IsMatch(password, "[^a-zA-Z0-9]")) score++;
-
-            return Math.Min(score, 5);
-        }
-
-        private void UpdateRequirements(string password)
-        {
-            bool req1 = password.Length >= 8;
-            UpdateRequirement(Dot_Req1, Lbl_Req1, req1);
-
-            bool req2 = Regex.IsMatch(password, "[A-Z]");
-            UpdateRequirement(Dot_Req2, Lbl_Req2, req2);
-
-            bool req3 = Regex.IsMatch(password, "[0-9]");
-            UpdateRequirement(Dot_Req3, Lbl_Req3, req3);
-        }
-
-        private void UpdateRequirement(Ellipse dot, TextBlock label, bool isMet)
-        {
-            if (isMet)
-            {
-                dot.Fill = new SolidColorBrush(Color.FromRgb(76, 175, 80));
-                dot.Stroke = new SolidColorBrush(Color.FromRgb(76, 175, 80));
-                label.Foreground = (Brush)FindResource("Rg.TextBody");
-            }
-            else
-            {
-                dot.Fill = new SolidColorBrush(Colors.Transparent);
-                dot.Stroke = new SolidColorBrush(Color.FromRgb(212, 212, 212));
-                label.Foreground = (Brush)FindResource("Rg.TextFaint");
-            }
         }
 
         private void CheckPasswordMatch()
         {
-            string password1 = GetPassword();
-            string password2 = GetPassword2();
-
-            if (string.IsNullOrEmpty(password1) || string.IsNullOrEmpty(password2))
-            {
-                Lbl_Coincidencia.Visibility = Visibility.Collapsed;
-                Shell_Password2.BorderBrush = (Brush)FindResource("Rg.FieldBorder");
-                return;
-            }
-
-            if (password1 == password2)
-            {
-                Lbl_Coincidencia.Text = "✓ Las contraseñas coinciden";
-                Lbl_Coincidencia.Foreground = new SolidColorBrush(Color.FromRgb(76, 175, 80));
-                Lbl_Coincidencia.Visibility = Visibility.Visible;
-                Shell_Password2.BorderBrush = new SolidColorBrush(Color.FromRgb(76, 175, 80));
-            }
-            else
-            {
-                Lbl_Coincidencia.Text = "✗ Las contraseñas no coinciden";
-                Lbl_Coincidencia.Foreground = new SolidColorBrush(Color.FromRgb(255, 77, 77));
-                Lbl_Coincidencia.Visibility = Visibility.Visible;
-                Shell_Password2.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 77, 77));
-            }
-
+            string password = GetPassword();
+            string confirmacion = GetPassword2();
+            bool mostrar = password.Length > 0 && confirmacion.Length > 0;
+            bool coinciden = password == confirmacion;
+            Lbl_Coincidencia.Visibility = mostrar ? Visibility.Visible : Visibility.Collapsed;
+            Lbl_Coincidencia.Text = coinciden ? "✓ Las contraseñas coinciden" : "✗ Las contraseñas no coinciden";
+            Lbl_Coincidencia.Foreground = coinciden ? Brushes.SeaGreen : Brushes.Firebrick;
             ValidateForm();
         }
 
@@ -416,47 +175,60 @@ namespace StayEasy.UI
         /// </summary>
         private bool EsCorreoCorporativo()
         {
-            return txt_rol.Visibility == Visibility.Visible;
+            return ValidadorDatos.EsCorreoCorporativo(Txt_Correo.Text);
         }
 
         private void ValidateForm()
         {
-            bool isValid = true;
+            Btn_CrearCuenta.IsEnabled = TryValidarFormulario(out string error);
+            bool formularioIniciado = Txt_Nombre.Text.Length > 0 || Txt_Apellido.Text.Length > 0
+                || Txt_Correo.Text.Length > 0 || Txt_Usuario.Text.Length > 0
+                || GetPassword().Length > 0 || GetPassword2().Length > 0 || Txt_DNI.Text.Length > 0;
+            Lbl_ErrorValidacion.Text = error;
+            Lbl_ErrorValidacion.Visibility = formularioIniciado && error.Length > 0
+                ? Visibility.Visible : Visibility.Collapsed;
+        }
 
-            if (Txt_Usuario.Text.Length < 3)
-                isValid = false;
-
-            string password = GetPassword();
-            if (password.Length < 8 ||
-                !Regex.IsMatch(password, "[A-Z]") ||
-                !Regex.IsMatch(password, "[0-9]"))
-                isValid = false;
-
-            string password2 = GetPassword2();
-            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(password2) || password != password2)
-                isValid = false;
-
-            if (Chk_Terminos.IsChecked != true)
-                isValid = false;
-
-            // Autogestión de Huésped: el DNI es obligatorio y debe ser numérico
-            if (!EsCorreoCorporativo())
+        private bool TryValidarFormulario(out string error)
+        {
+            error = string.Empty;
+            try
             {
-                if (!int.TryParse(Txt_DNI.Text, out int dniIngresado) || dniIngresado <= 0)
-                    isValid = false;
+                string nombre = Txt_Nombre.Text.Trim();
+                string apellido = Txt_Apellido.Text.Trim();
+                if (!ValidadorDatos.EsNombreValido(nombre) || !ValidadorDatos.EsNombreValido(apellido))
+                    throw new ArgumentException("Ingresá nombre y apellido válidos de hasta 100 caracteres cada uno.");
+                ValidadorDatos.ValidarCuenta(Txt_Usuario.Text.Trim(), GetPassword(),
+                    $"{nombre} {apellido}", Txt_Correo.Text.Trim());
+                if (GetPassword() != GetPassword2())
+                    throw new ArgumentException("Las contraseñas deben coincidir.");
+                if (!EsCorreoCorporativo())
+                    ValidadorDatos.ValidarDatosHuesped(nombre, apellido, Txt_DNI.Text.Trim(), Txt_Correo.Text.Trim(), null);
+                if (Chk_Terminos.IsChecked != true)
+                    throw new ArgumentException("Aceptá las condiciones de uso para continuar.");
+                return true;
             }
-
-            Btn_CrearCuenta.IsEnabled = isValid;
+            catch (ArgumentException ex)
+            {
+                error = ex.Message;
+                return false;
+            }
         }
 
         private void Btn_CrearCuenta_Click(object sender, RoutedEventArgs e)
         {
+            if (!TryValidarFormulario(out string error))
+            {
+                MessageBox.Show(error, "Revisá los datos", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ValidateForm();
+                return;
+            }
             try
             {
                 if (EsCorreoCorporativo())
                 {
                     // Alta de personal interno (Administración / Recepción / Limpieza)
-                    string nombreCompleto = Txt_Nombre.Text + " " + Txt_Apellido.Text;
+                    string nombreCompleto = $"{Txt_Nombre.Text.Trim()} {Txt_Apellido.Text.Trim()}";
                     usuario.Registrar(Txt_Usuario.Text, GetPassword(), nombreCompleto, Txt_Correo.Text);
 
                     MessageBox.Show(
@@ -509,27 +281,20 @@ namespace StayEasy.UI
         }
         public void Txt_Correo_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string username = Txt_Correo.Text;
-            int indice = username.IndexOf('@');
+            ActualizarTipoCuenta();
+        }
 
-            bool esCorporativo = false;
-
-            if (indice != -1)
-            {
-                string resultado = username.Substring(indice + 1);
-                esCorporativo = resultado == "stayeasy.enterprise.com.ar";
-            }
-
-            // Rama personal interno
-            txt_rol.Visibility = esCorporativo ? Visibility.Visible : Visibility.Collapsed;
-            Rol_Administracion.Visibility = esCorporativo ? Visibility.Visible : Visibility.Collapsed;
-            Rol_Limpieza.Visibility = esCorporativo ? Visibility.Visible : Visibility.Collapsed;
-            Rol_Recepcion.Visibility = esCorporativo ? Visibility.Visible : Visibility.Collapsed;
-
-            // Rama Huésped (inversa a la de personal interno)
-            txt_dni.Visibility = esCorporativo ? Visibility.Collapsed : Visibility.Visible;
-            Shell_DNI.Visibility = esCorporativo ? Visibility.Collapsed : Visibility.Visible;
-
+        private void ActualizarTipoCuenta()
+        {
+            bool corporativo = EsCorreoCorporativo();
+            Visibility personal = corporativo ? Visibility.Visible : Visibility.Collapsed;
+            Visibility huesped = corporativo ? Visibility.Collapsed : Visibility.Visible;
+            txt_rol.Visibility = personal;
+            Rol_Administracion.Visibility = personal;
+            Rol_Limpieza.Visibility = personal;
+            Rol_Recepcion.Visibility = personal;
+            txt_dni.Visibility = huesped;
+            Shell_DNI.Visibility = huesped;
             ValidateForm();
         }
     }

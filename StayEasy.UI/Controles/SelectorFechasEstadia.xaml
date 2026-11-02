@@ -1,0 +1,18 @@
+<UserControl x:Class="StayEasy.UI.Controles.SelectorFechasEstadia"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Language="es-AR">
+    <StackPanel>
+        <UniformGrid Columns="2">
+            <StackPanel Margin="0,0,8,0">
+                <TextBlock Text="Check-in" Margin="0,0,0,6" />
+                <DatePicker x:Name="Entrada" />
+            </StackPanel>
+            <StackPanel Margin="8,0,0,0">
+                <TextBlock Text="Check-out" Margin="0,0,0,6" />
+                <DatePicker x:Name="Salida" />
+            </StackPanel>
+        </UniformGrid>
+        <TextBlock x:Name="CantidadNoches" Margin="0,8,0,0" />
+        <TextBlock x:Name="Mensaje" Foreground="Firebrick" TextWrapping="Wrap" Visibility="Collapsed" Margin="0,6,0,0" />
+    </StackPanel>
+</UserControl>

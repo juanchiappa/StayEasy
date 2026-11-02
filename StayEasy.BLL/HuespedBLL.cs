@@ -2,6 +2,7 @@
 using StayEasy.BE;
 using StayEasy.MPP;
 using StayEasy.Seguridad;
+using StayEasy.Seguridad.Validaciones;
 
 namespace StayEasy.BLL
 {
@@ -9,23 +10,19 @@ namespace StayEasy.BLL
     {
         private readonly HuespedMPP _huespedMPP = new HuespedMPP();
         public int RegistrarHuesped(string nombre, string apellido, int dni, string email,
-                                     string telefono, string nombreUsuario, string passwordPlana)
+                                     string? telefono, string nombreUsuario, string passwordPlana)
         {
-            if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(passwordPlana))
-                throw new ArgumentException("El usuario y la contraseña son campos obligatorios.");
+            nombre = nombre?.Trim() ?? string.Empty;
+            apellido = apellido?.Trim() ?? string.Empty;
+            email = email?.Trim() ?? string.Empty;
+            nombreUsuario = nombreUsuario?.Trim() ?? string.Empty;
+            telefono = string.IsNullOrWhiteSpace(telefono) ? null : telefono.Trim();
 
-            if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(apellido))
-                throw new ArgumentException("Nombre y apellido son obligatorios.");
+            ValidadorDatos.ValidarDatosHuesped(nombre, apellido,
+                dni.ToString(System.Globalization.CultureInfo.InvariantCulture), email, telefono);
+            ValidadorDatos.ValidarCuenta(nombreUsuario, passwordPlana, $"{nombre} {apellido}", email);
 
-            if (dni <= 0)
-                throw new ArgumentException("El DNI ingresado no es válido.");
-
-            if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
-                throw new ArgumentException("El email ingresado no es válido.");
-
-            // Misma regla que ya aplica Registro.xaml.cs: los correos corporativos
-            // se registran como personal interno, no como huésped autogestionado.
-            if (email.EndsWith("@stayeasy.enterprise.com.ar", StringComparison.OrdinalIgnoreCase))
+            if (ValidadorDatos.EsCorreoCorporativo(email))
                 throw new ArgumentException("Los correos corporativos deben registrarse como personal interno, no como huésped.");
 
             byte[] hash = Criptografia.HashearPassword(passwordPlana);

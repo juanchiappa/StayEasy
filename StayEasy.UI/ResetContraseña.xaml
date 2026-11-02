@@ -1,6 +1,7 @@
-﻿<Window x:Class="StayEasy.UI.ResetPassword"
+<Window x:Class="StayEasy.UI.ResetPassword"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controles="clr-namespace:StayEasy.UI.Controles"
         Title="StayEasy · Recuperar contraseña"
         Width="1280" Height="800"
         MinWidth="1024" MinHeight="700"
@@ -323,13 +324,12 @@
                                 <Grid>
                                     <TextBlock x:Name="Ph_Mail" Text="Ingresá tu Mail"
                                                Style="{StaticResource Login.Placeholder}" />
-                                    <!-- Tip: Deberás manejar el evento TextChanged en C# para ocultar Ph_Mail cuando el usuario escriba -->
-                                    <TextBox x:Name="Txt_Mail" Style="{StaticResource Login.FieldInput}" TabIndex="1" />
+                                    <TextBox MaxLength="150" x:Name="Txt_Mail" Style="{StaticResource Login.FieldInput}" TabIndex="1" />
                                 </Grid>
                             </Border>
 
                             <!-- Botón Solicitar -->
-                            <Button x:Name="Btn_SolicitarToken" Content="Solicitar Token" 
+                            <Button x:Name="Btn_SolicitarToken" Content="Solicitar Token"
                                     Style="{StaticResource Login.Button.Primary}"
                                     Margin="0,26,0,0" IsDefault="True" TabIndex="2" Click="Btn_SolicitarToken_Click" />
                         </StackPanel>
@@ -344,22 +344,17 @@
                                 <Grid>
                                     <TextBlock x:Name="Ph_Token" Text="Ingresá tu Token"
                                                Style="{StaticResource Login.Placeholder}" />
-                                    <TextBox x:Name="Txt_Token" Style="{StaticResource Login.FieldInput}" TabIndex="3" />
+                                    <TextBox MaxLength="6" CharacterCasing="Upper" x:Name="Txt_Token" Style="{StaticResource Login.FieldInput}" TabIndex="3" />
                                 </Grid>
                             </Border>
 
-                            <!-- NUEVO: Campo para la nueva contraseña -->
-                            <TextBlock x:Name="lbl_NuevaClave" Text="Nueva Contraseña" Style="{StaticResource Login.Text.Label}" Margin="0,16,0,8" />
-                            <Border Style="{StaticResource Login.FieldShell}">
-                                <Grid>
-                                    <TextBlock x:Name="Ph_NuevaClave" Text="Ingresá tu nueva clave"
-                                               Style="{StaticResource Login.Placeholder}" />
-                                    <PasswordBox x:Name="Txt_NuevaClave" Style="{StaticResource Login.FieldPassword}" TabIndex="4" />
-                                </Grid>
-                            </Border>
+                            <!-- Nueva contraseña -->
+                            <TextBlock Text="Nueva contraseña" Style="{StaticResource Login.Text.Label}" Margin="0,16,0,8" />
+                            <controles:CampoPassword x:Name="CampoClave" Placeholder="Ingresá tu nueva clave" TabIndex="4" />
+                            <controles:IndicadorFortalezaPassword x:Name="IndicadorClave" Margin="0,10,0,0" />
 
-                            <!-- Botón Restablecer -->
-                            <Button x:Name="Btn_RestablecerToken" Content="Restablecer Contraseña" 
+<!-- Botón Restablecer -->
+                            <Button x:Name="Btn_RestablecerToken" Content="Restablecer Contraseña"
                                     Style="{StaticResource Login.Button.Primary}"
                                     Margin="0,26,0,0" IsDefault="True" TabIndex="5" Click="Btn_RestablecerToken_Click" />
                         </StackPanel>

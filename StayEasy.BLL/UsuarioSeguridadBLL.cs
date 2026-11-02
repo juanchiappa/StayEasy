@@ -1,6 +1,7 @@
 ﻿using StayEasy.MPP;       
 using StayEasy.Seguridad; 
 using StayEasy.Seguridad.Entidades;
+using StayEasy.Seguridad.Validaciones;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,8 +36,13 @@ namespace StayEasy.BLL
 
         public void Registrar(string nombreUsuario, string passwordPlana, string nombreCompleto, string email)
         {
-            if (string.IsNullOrWhiteSpace(nombreUsuario) || string.IsNullOrWhiteSpace(passwordPlana))
-                throw new ArgumentException("Faltan campos obligatorios para el registro.");
+            nombreUsuario = nombreUsuario?.Trim() ?? string.Empty;
+            nombreCompleto = nombreCompleto?.Trim() ?? string.Empty;
+            email = email?.Trim() ?? string.Empty;
+
+            ValidadorDatos.ValidarCuenta(nombreUsuario, passwordPlana, nombreCompleto, email);
+            if (!ValidadorDatos.EsCorreoCorporativo(email))
+                throw new ArgumentException("El personal interno debe utilizar un correo corporativo.");
 
             byte[] hash = Criptografia.HashearPassword(passwordPlana);
 

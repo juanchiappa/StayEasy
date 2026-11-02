@@ -1,89 +1,63 @@
-﻿using StayEasy.Seguridad.Entidades;
-using StayEasy.Seguridad.Utilidades;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using StayEasy.Seguridad.Entidades;
+using StayEasy.Seguridad.Utilidades;
+using StayEasy.Seguridad.Validaciones;
 
 namespace StayEasy.UI
 {
-    /// <summary>
-    /// Interaction logic for ResetContraseña.xaml
-    /// </summary>
     public partial class ResetPassword : Window
     {
         public ResetPassword()
         {
             InitializeComponent();
+            Txt_Mail.TextChanged += (_, _) => Ph_Mail.Visibility =
+                Txt_Mail.Text.Length == 0 ? Visibility.Visible : Visibility.Collapsed;
+            Txt_Token.TextChanged += (_, _) => Ph_Token.Visibility =
+                Txt_Token.Text.Length == 0 ? Visibility.Visible : Visibility.Collapsed;
+            CampoClave.PasswordChanged += (_, _) => IndicadorClave.Actualizar(CampoClave.Password);
         }
 
         private void Btn_SolicitarToken_Click(object sender, RoutedEventArgs e)
         {
-            string email = Txt_Mail.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                MessageBox.Show("Por favor, ingresá tu correo electrónico.");
-                return;
-            }
-
             try
             {
-                // 1. Publicar el evento para que la BLL genere el token y envíe el correo
-                var eventoSolicitud = new SolicitarRecuperacionEvento { Email = email };
-                BusEventosNativo.Instancia.Publicar(eventoSolicitud);
-
-                // 2. Transición visual al Paso 2
+                string email = Txt_Mail.Text.Trim();
+                ValidadorDatos.ValidarEmail(email);
+                BusEventosNativo.Instancia.Publicar(new SolicitarRecuperacionEvento { Email = email });
+                Pnl_Error.Visibility = Visibility.Collapsed;
                 PanelPaso1.Visibility = Visibility.Collapsed;
                 PanelPaso2.Visibility = Visibility.Visible;
-
-                // Opcional: Poner el cursor automáticamente en el campo del Token
                 Txt_Token.Focus();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
+            catch (Exception ex) { MostrarError(ex.Message); }
         }
 
         private void Btn_RestablecerToken_Click(object sender, RoutedEventArgs e)
         {
-            string token = Txt_Token.Text.Trim();
-            string nuevaClave = Txt_NuevaClave.Password; // PasswordBox no usa .Text
-
-            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(nuevaClave))
-            {
-                MessageBox.Show("Por favor, completá el token y tu nueva contraseña.");
-                return;
-            }
-
             try
             {
-                // 1. Publicar el evento para que la BLL valide el token y actualice la base de datos
-                var eventoEjecucion = new EjecutarRecuperacionEvento
+                string token = Txt_Token.Text.Trim().ToUpperInvariant();
+                if (!ValidadorDatos.EsTokenValido(token))
+                    throw new ArgumentException("El código debe contener exactamente 6 caracteres entre 0-9 y A-F.");
+                ValidadorDatos.ValidarPassword(CampoClave.Password);
+                BusEventosNativo.Instancia.Publicar(new EjecutarRecuperacionEvento
                 {
                     Token = token,
-                    NuevaClave = nuevaClave
-                };
-
-                BusEventosNativo.Instancia.Publicar(eventoEjecucion);
-
-                // 2. Mensaje de éxito y cierre de ventana
-                MessageBox.Show("Tu contraseña ha sido actualizada con éxito. Ya podés iniciar sesión.", "StayEasy", MessageBoxButton.OK, MessageBoxImage.Information);
-                this.Close();
+                    NuevaClave = CampoClave.Password
+                });
+                CampoClave.Limpiar();
+                MessageBox.Show("Tu contraseña fue actualizada. Ya podés iniciar sesión.",
+                    "StayEasy", MessageBoxButton.OK, MessageBoxImage.Information);
+                Close();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            catch (Exception ex) { MostrarError(ex.Message); }
+        }
+
+        private void MostrarError(string mensaje)
+        {
+            Lbl_Error.Text = mensaje;
+            Pnl_Error.Visibility = Visibility.Visible;
         }
     }
 }

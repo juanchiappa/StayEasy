@@ -1,17 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 using StayEasy.BE;
 using StayEasy.BLL;
+using StayEasy.Seguridad.Validaciones;
 
 namespace StayEasy.UI
 {
@@ -33,37 +30,24 @@ namespace StayEasy.UI
         /// <summary>Evita recalcular mientras se estan seteando los valores iniciales.</summary>
         private bool _inicializando = true;
 
-        // Buscador de huesped: se arma por codigo porque el XAML no tiene
-        // contenedor de resultados.
-        private Popup? _popupResultados;
-        private ListBox? _listaResultados;
-
-        /// <summary>Debounce del buscador: no consulta en cada tecla.</summary>
-        private DispatcherTimer? _temporizadorBusqueda;
-
         public Reservas()
         {
             InitializeComponent();
-
-            ArmarBuscadorDeHuesped();
+            SelectorHuesped.Buscar = _reservaBLL.BuscarHuesped;
+            SelectorHuesped.SeleccionChanged += (_, _) =>
+            {
+                _huespedElegido = SelectorHuesped.Seleccionado;
+                OcultarError(Er_Huesped);
+                RecalcularResumen();
+            };
+            SelectorFechas.MaximoNoches = ReservaBLL.MAXIMO_NOCHES;
+            SelectorFechas.FechasChanged += (_, _) =>
+            {
+                if (!_inicializando) CargarDisponibilidad();
+            };
             EngancharEventos();
-
-            // Rango por defecto: una noche a partir de hoy.
-            Dp_CheckIn.SelectedDate  = DateTime.Today;
-            Dp_CheckOut.SelectedDate = DateTime.Today.AddDays(1);
-            Dp_CheckIn.DisplayDateStart  = DateTime.Today;
-            Dp_CheckOut.DisplayDateStart = DateTime.Today.AddDays(1);
-
-            LimpiarHuesped();
-
-            // El estado de una reserva nueva siempre es Confirmada: lo decide
-            // el stored procedure, no la UI.
             Cb_Estado.IsEnabled = false;
-
-            Tx_IdReserva.Text = "—";
-
             _inicializando = false;
-
             CargarDisponibilidad();
         }
 
@@ -73,12 +57,6 @@ namespace StayEasy.UI
 
         private void EngancharEventos()
         {
-            Dp_CheckIn.SelectedDateChanged  += (_, _) => AlCambiarFechas();
-            Dp_CheckOut.SelectedDateChanged += (_, _) => AlCambiarFechas();
-
-            Tb_BuscarHuesped.KeyDown     += Tb_BuscarHuesped_KeyDown;
-            Tb_BuscarHuesped.TextChanged += Tb_BuscarHuesped_TextChanged;
-            Btn_CambiarHuesped.Click     += (_, _) => LimpiarHuesped();
             Btn_NuevoHuesped.Click       += Btn_NuevoHuesped_Click;
 
             foreach (CheckBox servicio in ServiciosDeLaLista())
@@ -102,26 +80,6 @@ namespace StayEasy.UI
         // Paso 1 y 2: fechas -> disponibilidad
         // ==================================================================
 
-        private void AlCambiarFechas()
-        {
-            if (_inicializando) return;
-
-            // El check-out siempre tiene que ir despues del check-in.
-            if (Dp_CheckIn.SelectedDate is DateTime entrada)
-            {
-                Dp_CheckOut.DisplayDateStart = entrada.AddDays(1);
-
-                if (Dp_CheckOut.SelectedDate is DateTime salida && salida.Date <= entrada.Date)
-                {
-                    _inicializando = true;
-                    Dp_CheckOut.SelectedDate = entrada.AddDays(1);
-                    _inicializando = false;
-                }
-            }
-
-            CargarDisponibilidad();
-        }
-
         /// <summary>
         /// Repuebla la grilla con lo que devuelve la base para el rango actual.
         /// Reemplaza por completo las tarjetas hardcodeadas del XAML.
@@ -130,11 +88,10 @@ namespace StayEasy.UI
         {
             Grid_Habitaciones.Children.Clear();
             _disponibles.Clear();
+            OcultarError(Er_Habitacion);
 
-            if (Dp_CheckIn.SelectedDate is not DateTime checkIn ||
-                Dp_CheckOut.SelectedDate is not DateTime checkOut)
+            if (!SelectorFechas.TryObtenerRango(out DateTime checkIn, out DateTime checkOut))
             {
-                MostrarError(Er_Fechas, "Elegí las fechas de ingreso y salida.");
                 RecalcularResumen();
                 return;
             }
@@ -142,17 +99,16 @@ namespace StayEasy.UI
             try
             {
                 _disponibles = _reservaBLL.BuscarDisponibilidad(checkIn, checkOut);
-                OcultarError(Er_Fechas);
             }
             catch (ArgumentException ex)          // validaciones de la BLL
             {
-                MostrarError(Er_Fechas, ex.Message);
+                MostrarError(Er_Habitacion, ex.Message);
                 RecalcularResumen();
                 return;
             }
             catch (Exception ex)                  // la base no respondio
             {
-                MostrarError(Er_Fechas, ex.Message);
+                MostrarError(Er_Habitacion, ex.Message);
                 RecalcularResumen();
                 return;
             }
@@ -242,142 +198,6 @@ namespace StayEasy.UI
         // Paso 3: huesped
         // ==================================================================
 
-        private void ArmarBuscadorDeHuesped()
-        {
-            // Busca sola mientras se escribe, pero espera 350 ms de silencio
-            // para no mandar una consulta por tecla.
-            _temporizadorBusqueda = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(350) };
-            _temporizadorBusqueda.Tick += (_, _) =>
-            {
-                _temporizadorBusqueda!.Stop();
-                BuscarHuespedes(seleccionarSiUnico: false);
-            };
-
-            _listaResultados = new ListBox { MaxHeight = 220 };
-            _listaResultados.SelectionChanged += Lista_SelectionChanged;
-
-            _popupResultados = new Popup
-            {
-                PlacementTarget = Tb_BuscarHuesped,
-                Placement       = PlacementMode.Bottom,
-                StaysOpen       = false,
-                AllowsTransparency = true,
-                Child = new Border
-                {
-                    Background      = Pincel("Paper", Brushes.White),
-                    BorderBrush     = Pincel("Muted", Brushes.LightGray),
-                    BorderThickness = new Thickness(1),
-                    CornerRadius    = new CornerRadius(10),
-                    Padding         = new Thickness(4),
-                    Child           = _listaResultados
-                }
-            };
-        }
-
-        private void Tb_BuscarHuesped_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (_inicializando) return;
-
-            // Con un huesped ya elegido el campo no vuelve a buscar solo:
-            // primero hay que tocar "Cambiar".
-            if (_huespedElegido is not null) return;
-
-            _temporizadorBusqueda!.Stop();
-
-            if (Tb_BuscarHuesped.Text.Trim().Length < 2)
-            {
-                _popupResultados!.IsOpen = false;
-                OcultarError(Er_Huesped);
-                return;
-            }
-
-            _temporizadorBusqueda.Start();
-        }
-
-        private void Tb_BuscarHuesped_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                _temporizadorBusqueda!.Stop();
-                BuscarHuespedes(seleccionarSiUnico: true);   // Enter con un solo match lo elige
-            }
-            else if (e.Key == Key.Escape)
-            {
-                _popupResultados!.IsOpen = false;
-            }
-        }
-
-        private void BuscarHuespedes(bool seleccionarSiUnico)
-        {
-            string texto = Tb_BuscarHuesped.Text.Trim();
-            if (texto.Length < 2) return;
-
-            try
-            {
-                List<Huesped> encontrados = _reservaBLL.BuscarHuesped(texto);
-
-                if (encontrados.Count == 0)
-                {
-                    _listaResultados!.ItemsSource = null;
-                    _popupResultados!.IsOpen = false;
-                    MostrarError(Er_Huesped, $"Ningún huésped coincide con \"{texto}\".");
-                    return;
-                }
-
-                OcultarError(Er_Huesped);
-
-                if (seleccionarSiUnico && encontrados.Count == 1)
-                {
-                    ElegirHuesped(encontrados[0]);
-                    return;
-                }
-
-                _listaResultados!.ItemsSource  = encontrados;
-                _listaResultados.SelectedIndex = -1;
-                _popupResultados!.Width        = Tb_BuscarHuesped.ActualWidth;
-                _popupResultados.IsOpen        = true;
-            }
-            catch (Exception ex)
-            {
-                MostrarError(Er_Huesped, ex.Message);
-            }
-        }
-
-        private void Lista_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_listaResultados?.SelectedItem is Huesped elegido)
-            {
-                _popupResultados!.IsOpen = false;
-                ElegirHuesped(elegido);
-            }
-        }
-
-        private void ElegirHuesped(Huesped huesped)
-        {
-            _huespedElegido = huesped;
-
-            Tx_HuespedIniciales.Text = huesped.Iniciales;
-            Tx_HuespedNombre.Text    = huesped.NombreCompleto;
-
-            var detalle = new StringBuilder($"DNI {huesped.DNI.ToString("N0", Cultura)}");
-            if (!string.IsNullOrWhiteSpace(huesped.Email))    detalle.Append(" · ").Append(huesped.Email);
-            if (!string.IsNullOrWhiteSpace(huesped.Telefono)) detalle.Append(" · ").Append(huesped.Telefono);
-            Tx_HuespedDetalle.Text = detalle.ToString();
-
-            Pn_HuespedElegido.Visibility = Visibility.Visible;
-            OcultarError(Er_Huesped);
-            RecalcularResumen();
-        }
-
-        private void LimpiarHuesped()
-        {
-            _huespedElegido = null;
-            Pn_HuespedElegido.Visibility = Visibility.Collapsed;
-            Tb_BuscarHuesped.Text = string.Empty;
-            Tb_BuscarHuesped.Focus();
-            RecalcularResumen();
-        }
-
         private void Btn_NuevoHuesped_Click(object sender, RoutedEventArgs e)
         {
             // Pendiente: hoy el unico alta de huesped es el autorregistro
@@ -420,77 +240,53 @@ namespace StayEasy.UI
         private void RecalcularResumen()
         {
             if (_inicializando) return;
-
             HabitacionDisponible? habitacion = HabitacionElegida;
-            List<(string Nombre, decimal Precio)> servicios = ServiciosElegidos();
-
-            Tx_ServiciosElegidos.Text = $"{servicios.Count} seleccionados";
-
-            int     noches      = habitacion?.Noches   ?? 0;
+            var servicios = ServiciosElegidos();
+            int noches = habitacion?.Noches ?? 0;
             decimal alojamiento = habitacion?.Subtotal ?? 0m;
             decimal totalServicios = servicios.Sum(s => s.Precio);
-            decimal total = alojamiento + totalServicios;
-
-            Tx_Noches.Text = noches == 1 ? "1 noche" : $"{noches} noches";
-
-            Tx_ResHabLabel.Text  = habitacion is null
-                                   ? "Habitación"
-                                   : $"Habitación {habitacion.NumeroHabitacion} · {habitacion.DescripcionTipo}";
-            Tx_ResHabValor.Text  = alojamiento.ToString("C", Cultura);
-
-            Tx_ResNochesLabel.Text = noches == 1 ? "1 noche de estadía" : $"{noches} noches de estadía";
-            Tx_ResNochesValor.Text = (habitacion?.PrecioNoche ?? 0m).ToString("C", Cultura);
-
-            Tx_ResServiciosLabel.Text = servicios.Count == 0
-                                        ? "Sin servicios adicionales"
-                                        : string.Join(" · ", servicios.Select(s => s.Nombre));
-            Tx_ResServiciosValor.Text = totalServicios.ToString("C", Cultura);
-
-            // El descuento por combo entra cuando se implemente el Composite
-            // de servicios; por ahora siempre es cero.
-            Tx_ResDescuentoValor.Text = 0m.ToString("C", Cultura);
-
-            Tx_Total.Text = total.ToString("C", Cultura);
-
-            decimal senia = SeniaIngresada(total);
-            Tx_SeniaLabel.Text = Rb_PagoTotal.IsChecked == true ? "Pago total" :
-                                 Rb_AlCheckIn.IsChecked  == true ? "A pagar en el check-in" : "Seña";
-            Tx_SeniaMonto.Text = senia.ToString("C", Cultura);
-            Tx_Saldo.Text      = (total - senia).ToString("C", Cultura);
-
-            Btn_Confirmar.IsEnabled = habitacion is not null && _huespedElegido is not null;
-
-            Tx_NotaEstado.Text = Btn_Confirmar.IsEnabled
-                                 ? "Listo para confirmar."
-                                 : "Elegí fechas, habitación y huésped para confirmar.";
+            decimal total = habitacion is null ? 0m
+                : _reservaBLL.CalcularTotal(habitacion, servicios.Select(s => s.Precio));
+            bool seniaValida = TryObtenerSenia(total, out decimal senia);
+            bool fechasValidas = SelectorFechas.TryObtenerRango(out DateTime entrada, out DateTime salida);
+            bool habitacionVigente = fechasValidas && habitacion is not null
+                && habitacion.FechaCheckIn.Date == entrada && habitacion.FechaCheckOut.Date == salida;
+            Tx_ServiciosElegidos.Text = $"{servicios.Count} seleccionados";
+            string etiquetaPago = Rb_PagoTotal.IsChecked == true ? "Pago total previsto"
+                : Rb_AlCheckIn.IsChecked == true ? "A pagar en el check-in" : "Seña prevista";
+            Resumen.Actualizar(habitacion is null ? "Sin habitación seleccionada"
+                : $"Habitación {habitacion.NumeroHabitacion} · {habitacion.DescripcionTipo}",
+                noches, alojamiento, totalServicios, total, seniaValida ? senia : 0m, etiquetaPago);
+            Btn_Confirmar.IsEnabled = habitacionVigente && _huespedElegido is not null && seniaValida;
+            Resumen.MostrarEstado(Btn_Confirmar.IsEnabled ? "Listo para confirmar."
+                : "Revisá las fechas, la habitación, el huésped y el importe.");
         }
 
         /// <summary>
         /// Solo para mostrar el saldo en pantalla: la base todavia no tiene
         /// donde guardar senia ni medio de pago (falta la tabla de pagos).
         /// </summary>
-        private decimal SeniaIngresada(decimal total)
+        private bool TryObtenerSenia(decimal total, out decimal senia)
         {
-            if (Rb_PagoTotal.IsChecked == true) return total;
-            if (Rb_AlCheckIn.IsChecked == true) return 0m;
-
-            string texto = new string((Tb_Senia.Text ?? string.Empty)
-                                      .Where(c => char.IsDigit(c) || c == ',' || c == '.').ToArray());
-
-            if (!decimal.TryParse(texto, NumberStyles.Any, Cultura, out decimal senia) || senia < 0m)
+            senia = 0m;
+            if (Rb_PagoTotal.IsChecked == true)
             {
-                MostrarError(Er_Senia, "El monto de la seña no es válido.");
-                return 0m;
+                senia = total;
+                OcultarError(Er_Senia);
+                return true;
             }
-
-            if (senia > total)
+            if (Rb_AlCheckIn.IsChecked == true)
             {
-                MostrarError(Er_Senia, "La seña no puede superar el total.");
-                return total;
+                OcultarError(Er_Senia);
+                return true;
             }
-
+            if (!ValidadorDatos.TryValidarSenia(Tb_Senia.Text, total, out senia, out string error))
+            {
+                MostrarError(Er_Senia, error);
+                return false;
+            }
             OcultarError(Er_Senia);
-            return senia;
+            return true;
         }
 
         // ==================================================================
@@ -499,6 +295,8 @@ namespace StayEasy.UI
 
         private void Btn_Confirmar_Click(object sender, RoutedEventArgs e)
         {
+            RecalcularResumen();
+            if (!Btn_Confirmar.IsEnabled) return;
             HabitacionDisponible? habitacion = HabitacionElegida;
 
             if (_huespedElegido is null)
@@ -519,10 +317,13 @@ namespace StayEasy.UI
             {
                 IEnumerable<decimal> servicios = ServiciosElegidos().Select(s => s.Precio);
 
+                decimal total = _reservaBLL.CalcularTotal(habitacion, servicios);
+                if (!TryObtenerSenia(total, out _)) return;
+
                 int idReserva = _reservaBLL.RegistrarReserva(_huespedElegido, habitacion, servicios);
 
-                Tx_IdReserva.Text  = $"#{idReserva}";
-                Tx_NotaEstado.Text = "Reserva confirmada.";
+                Resumen.MostrarId(idReserva);
+                Resumen.MostrarEstado("Reserva confirmada.");
 
                 MessageBox.Show(
                     $"Reserva #{idReserva} confirmada para {_huespedElegido.NombreCompleto}, " +
@@ -541,7 +342,7 @@ namespace StayEasy.UI
             }
             finally
             {
-                Btn_Confirmar.IsEnabled = HabitacionElegida is not null && _huespedElegido is not null;
+                RecalcularResumen();
             }
         }
 

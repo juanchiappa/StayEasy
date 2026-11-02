@@ -5,6 +5,7 @@ using StayEasy.MPP;
 using StayEasy.Seguridad.Entidades;
 using StayEasy.Seguridad.Utilidades;
 using StayEasy.Seguridad;
+using StayEasy.Seguridad.Validaciones;
 
 namespace StayEasy.BLL
 {
@@ -18,13 +19,13 @@ namespace StayEasy.BLL
 
         public void ManejarSolicitud(SolicitarRecuperacionEvento ev)
         {
-            // Opcional: Validar con UsuarioMPP si el correo de verdad existe en el sistema
+            string email = ev.Email?.Trim() ?? string.Empty;
+            ValidadorDatos.ValidarEmail(email);
 
-            // Generamos un token alfanumérico corto (6 caracteres) ideal para copiar/pegar en XAML
             string codigoCorto = Guid.NewGuid().ToString().Substring(0, 6).ToUpper();
             Token nuevoToken = new Token(
                 0,
-                ev.Email,
+                email,
                 codigoCorto,
                 DateTime.Now.AddMinutes(15)
                 );
@@ -40,15 +41,18 @@ namespace StayEasy.BLL
 
         public void ManejarEjecucion(EjecutarRecuperacionEvento ev)
         {
-            var tokenValido = _tokenMPP.ObtenerTokenValido(ev.Token);
+            string token = ev.Token?.Trim().ToUpperInvariant() ?? string.Empty;
+            if (!ValidadorDatos.EsTokenValido(token))
+                throw new ArgumentException("El código debe contener exactamente 6 caracteres entre 0-9 y A-F.");
+            ValidadorDatos.ValidarPassword(ev.NuevaClave);
+            var tokenValido = _tokenMPP.ObtenerTokenValido(token);
 
             if (tokenValido == null)
                 throw new Exception("El código es inválido o ha expirado.");
 
             byte[] hashBytes= Criptografia.HashearPassword(ev.NuevaClave);
-            string hashNuevo = Convert.ToBase64String(hashBytes);
             _tokenMPP.ActualizarContraseña(tokenValido.Email, hashBytes);
-            _tokenMPP.EliminarToken(ev.Token);
+            _tokenMPP.EliminarToken(token);
         }
     }
 }
