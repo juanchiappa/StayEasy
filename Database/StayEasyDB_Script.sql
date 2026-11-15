@@ -1,4 +1,4 @@
-USE [master]
+﻿USE [master]
 GO
 /****** Object:  Database [StayEasyDB]    Script Date: 15/09/2026 10:11:37 ******/
 CREATE DATABASE [StayEasyDB]
@@ -1380,6 +1380,71 @@ BEGIN
     SELECT 1 
     FROM Usuarios 
     WHERE Email = @Email
+END
+GO
+/****** Reportes del Dashboard: ocupacion diaria e ingresos del mes ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/* Una fila por dia del rango [@Desde, @Hasta]. Una habitacion cuenta como
+   ocupada la noche del dia D si tiene una reserva no cancelada con
+   FechaCheckIn <= D < FechaCheckOut. Las habitaciones fuera de servicio ('F')
+   no entran en el total. */
+CREATE OR ALTER PROCEDURE [dbo].[sp_ReporteOcupacionDiaria]
+    @Desde DATE,
+    @Hasta DATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @Desde IS NULL OR @Hasta IS NULL OR @Hasta < @Desde
+        THROW 52040, 'Rango de fechas invalido para el reporte de ocupacion.', 1;
+
+    DECLARE @Totales INT = (SELECT COUNT(*) FROM dbo.Habitacion WHERE Estado <> 'F');
+
+    ;WITH Dias AS (
+        SELECT @Desde AS Fecha
+        UNION ALL
+        SELECT DATEADD(DAY, 1, Fecha) FROM Dias WHERE Fecha < @Hasta
+    )
+    SELECT  d.Fecha,
+            (SELECT COUNT(DISTINCT r.HabitacionID)
+             FROM   dbo.Reserva r
+             WHERE  r.Estado IN ('Confirmada', 'EnCurso', 'Finalizada')
+               AND  r.FechaCheckIn  <= d.Fecha
+               AND  r.FechaCheckOut >  d.Fecha) AS HabitacionesOcupadas,
+            @Totales AS HabitacionesTotales
+    FROM    Dias d
+    ORDER BY d.Fecha
+    OPTION (MAXRECURSION 400);
+END
+GO
+/* Facturacion del mes: alojamiento (Reserva.Total) y consumos de las
+   reservas no canceladas cuyo check-in cae en el mes pedido. */
+CREATE OR ALTER PROCEDURE [dbo].[sp_ReporteIngresosMes]
+    @Anio INT,
+    @Mes  INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @Mes NOT BETWEEN 1 AND 12
+        THROW 52041, 'Mes invalido para el reporte de ingresos.', 1;
+
+    DECLARE @Inicio DATE = DATEFROMPARTS(@Anio, @Mes, 1);
+    DECLARE @Fin    DATE = DATEADD(MONTH, 1, @Inicio);
+
+    SELECT
+        ISNULL((SELECT SUM(r.Total)
+                FROM   dbo.Reserva r
+                WHERE  r.Estado <> 'Cancelada'
+                  AND  r.FechaCheckIn >= @Inicio AND r.FechaCheckIn < @Fin), 0) AS Alojamiento,
+        ISNULL((SELECT SUM(c.Cantidad * c.PrecioUnitario)
+                FROM   dbo.ConsumoReserva c
+                JOIN   dbo.Reserva r ON r.ID_Reserva = c.ID_Reserva
+                WHERE  r.Estado <> 'Cancelada'
+                  AND  r.FechaCheckIn >= @Inicio AND r.FechaCheckIn < @Fin), 0) AS Consumos;
 END
 GO
 USE [master]

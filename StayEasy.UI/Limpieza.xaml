@@ -1,4 +1,4 @@
-﻿<Window x:Class="StayEasy.UI.Dashboard"
+﻿<Window x:Class="StayEasy.UI.Limpieza"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="StayEasy"
