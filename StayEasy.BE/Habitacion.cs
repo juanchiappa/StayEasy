@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Xml.Serialization;
 
 namespace StayEasy.BE
 {
@@ -8,6 +9,9 @@ namespace StayEasy.BE
     /// discriminador viaja a la columna Habitacion.TipoHabitacion.
     /// Se instancia siempre con la factory <see cref="Crear"/>.
     /// </summary>
+    [Serializable]
+    [XmlInclude(typeof(HabitacionEstandar))]
+    [XmlInclude(typeof(SuitePresidencial))]
     public abstract class Habitacion
     {
         // Discriminadores de la columna TipoHabitacion (char(1)).

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -25,23 +25,45 @@ namespace StayEasy.UI
         private static readonly CultureInfo Cultura = CultureInfo.GetCultureInfo("es-AR");
 
         private readonly ReporteBLL _reporteBLL = new ReporteBLL();
+        private object? _contenidoInicio;
+
+        public ISeries[] SeriesEstadisticas { get; set; }
 
         public Dashboard()
         {
             InitializeComponent();
-            Lbl_Titulo.Text = GestorSesion.Instancia.UsuarioLogueado.NombreUsuario;
-            Lbl_UsuarioNombre.Text = GestorSesion.Instancia.UsuarioLogueado.NombreUsuario;
-            string[] NombreCompleto = GestorSesion.Instancia.UsuarioLogueado.NombreCompleto.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            _contenidoInicio = Host_Contenido.Content;
 
-            string iniciales = "";
-
-            // Verificar que haya al menos dos palabras
-            if (NombreCompleto.Length >= 2)
+            SeriesEstadisticas = new ISeries[]
             {
-                // Tomar la primera letra de la primera palabra y la primera de la segunda
-                iniciales = $"{NombreCompleto[0][0]}{NombreCompleto[1][0]}".ToUpper();
+                new LineSeries<double>
+                {
+                    Values = new double[] { 40, 65, 80, 70, 90, 100 },
+                    Name = "Ocupación (%)"
+                },
+                new ColumnSeries<double>
+                {
+                    Values = new double[] { 12000, 25000, 28000, 21000, 32000, 45000 },
+                    Name = "Ingresos ($)"
+                }
+            };
+            this.DataContext = this;
+
+            var usuarioSesion = GestorSesion.Instancia.UsuarioLogueado;
+            if (usuarioSesion != null)
+            {
+                Lbl_Titulo.Text = usuarioSesion.NombreUsuario;
+                Lbl_UsuarioNombre.Text = usuarioSesion.NombreUsuario;
+                string[] NombreCompleto = (usuarioSesion.NombreCompleto ?? string.Empty)
+                    .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                string iniciales = "";
+                if (NombreCompleto.Length >= 2)
+                {
+                    iniciales = $"{NombreCompleto[0][0]}{NombreCompleto[1][0]}".ToUpper();
+                }
+                Lbl_iniciales.Text = iniciales;
             }
-            Lbl_iniciales.Text = iniciales;
 
             CargarEstadisticas();
         }
@@ -208,11 +230,29 @@ namespace StayEasy.UI
             }
         }
 
+        private void BotonPrueba_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Mensaje de prueba: El botón animado funciona correctamente.", "Prueba Evento Click", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
         private void Btn_NuevaReserva_Click(object sender, RoutedEventArgs e)
         {
             var reserva = new Reservas();
             reserva.Show();
             this.Close();
+        }
+
+        private void Nav_Inicio_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Host_Contenido is null || _contenidoInicio is null) return;
+            Host_Contenido.Content = _contenidoInicio;
+        }
+
+        private void Nav_BackupRestore_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Host_Contenido is null) return;
+            var vista = new BackupRestoreView();
+            Host_Contenido.Content = vista.ExtraerContenidoMdi();
         }
     }
 }

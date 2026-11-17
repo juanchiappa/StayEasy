@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace StayEasy.BE
 {
@@ -10,6 +10,11 @@ namespace StayEasy.BE
     /// </summary>
     public class HabitacionDisponible
     {
+        public HabitacionDisponible()
+        {
+            Habitacion = null!;
+        }
+
         public HabitacionDisponible(Habitacion habitacion, DateTime fechaCheckIn,
                                     DateTime fechaCheckOut, int noches, decimal subtotalBase)
         {

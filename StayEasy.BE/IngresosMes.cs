@@ -6,6 +6,8 @@ namespace StayEasy.BE
     /// </summary>
     public class IngresosMes
     {
+        public IngresosMes() { }
+
         public IngresosMes(int anio, int mes, decimal alojamiento, decimal consumos)
         {
             Anio        = anio;

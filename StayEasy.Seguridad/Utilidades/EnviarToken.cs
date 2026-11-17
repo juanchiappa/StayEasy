@@ -1,4 +1,3 @@
-﻿using Microsoft.Data.SqlClient;
 using StayEasy.Seguridad.Entidades;
 using System;
 using System.Collections.Generic;

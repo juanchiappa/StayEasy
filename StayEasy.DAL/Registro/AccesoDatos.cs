@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,9 +35,9 @@ namespace StayEasy.DAL.Registro
                     }
                     catch (SqlException ex)
                     {
-                        if (ex.Number == 52002)
+                        if (ex.Number >= 52000 && ex.Number <= 52999)
                         {
-                            throw new Exception(ex.Message);
+                            throw new Exception(ex.Message, ex);
                         }
                         throw new Exception($"Error de base de datos: {ex.Message}", ex);
                     }
@@ -69,11 +69,11 @@ namespace StayEasy.DAL.Registro
                     }
                     catch (SqlException ex)
                     {
-                        if (ex.Number == 52010)
+                        if (ex.Number >= 52000 && ex.Number <= 52999)
                         {
-                            throw new Exception(ex.Message);
+                            throw new Exception(ex.Message, ex);
                         }
-                        throw new Exception($"Error de base de datos en Reservas: {ex.Message}", ex);
+                        throw new Exception($"Error de base de datos: {ex.Message}", ex);
                     }
                 }
             }

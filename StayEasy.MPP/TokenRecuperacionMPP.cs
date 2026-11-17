@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using StayEasy.DAL.Registro;
 using StayEasy.Seguridad.Entidades;
 using System;
@@ -15,29 +15,15 @@ namespace StayEasy.MPP
 
         public void GuardarToken(Token token)
         {
-            using (SqlConnection conn = new SqlConnection(_conexion))
+            AccesoDatos dal = new AccesoDatos();
+            Hashtable parametros = new Hashtable
             {
-                // Se agrega SCOPE_IDENTITY() para retornar el ID recién creado
-                string query = @"
-                    INSERT INTO TokensRecuperacion (Email, Token, FechaExpiracion) 
-                    VALUES (@Email, @Token, @Exp);
-                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
+                { "@Email", token.Email },
+                { "@Token", token.token },
+                { "@Exp",   token.TiempoDeExpiracion }
+            };
 
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@Email", token.Email);
-                    cmd.Parameters.AddWithValue("@Token", token.token);
-                    cmd.Parameters.AddWithValue("@Exp", token.TiempoDeExpiracion);
-
-                    conn.Open();
-
-                    // ExecuteScalar ejecuta la consulta y devuelve la primera columna de la primera fila (el nuevo ID)
-                    int nuevoId = (int)cmd.ExecuteScalar();
-
-                    // Actualizamos la entidad con el ID asignado por la base de datos
-                    token.ID = nuevoId;
-                }
-            }
+            token.ID = dal.EscribirEscalar("sp_GuardarToken", parametros);
         }
 
         public Token ObtenerTokenValido(string token)

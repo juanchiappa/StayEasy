@@ -1,4 +1,4 @@
-﻿USE [master]
+USE [master]
 GO
 /****** Object:  Database [StayEasyDB]    Script Date: 15/09/2026 10:11:37 ******/
 CREATE DATABASE [StayEasyDB]
@@ -495,35 +495,8 @@ GO
 ALTER TABLE [dbo].[Bitacora]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
 REFERENCES [dbo].[Usuario] ([UsuarioID])
 GO
-ALTER TABLE [dbo].[Bitacora]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
-REFERENCES [dbo].[Usuario] ([UsuarioID])
-GO
-ALTER TABLE [dbo].[Bitacora]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
-REFERENCES [dbo].[Usuario] ([UsuarioID])
-GO
-ALTER TABLE [dbo].[Bitacora]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
-REFERENCES [dbo].[Usuario] ([UsuarioID])
-GO
 ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Reserva])
 REFERENCES [dbo].[Reserva] ([ID_Reserva])
-GO
-ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Reserva])
-REFERENCES [dbo].[Reserva] ([ID_Reserva])
-GO
-ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Reserva])
-REFERENCES [dbo].[Reserva] ([ID_Reserva])
-GO
-ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Reserva])
-REFERENCES [dbo].[Reserva] ([ID_Reserva])
-GO
-ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
-REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
-GO
-ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
-REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
-GO
-ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
-REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
 GO
 ALTER TABLE [dbo].[ConsumoReserva]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
 REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
@@ -536,46 +509,10 @@ GO
 ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Paquete])
 REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
 GO
-ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Paquete])
-REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
-GO
-ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Paquete])
-REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
-GO
-ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Paquete])
-REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
-GO
-ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
-REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
-GO
-ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
-REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
-GO
-ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
-REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
-GO
 ALTER TABLE [dbo].[Paquete]  WITH CHECK ADD FOREIGN KEY([ID_Servicio])
 REFERENCES [dbo].[ServiciosPaquete] ([ID_Servicio])
 GO
 ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([FamiliaPadreID])
-REFERENCES [dbo].[Patente] ([PatenteID])
-GO
-ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([FamiliaPadreID])
-REFERENCES [dbo].[Patente] ([PatenteID])
-GO
-ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([FamiliaPadreID])
-REFERENCES [dbo].[Patente] ([PatenteID])
-GO
-ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([FamiliaPadreID])
-REFERENCES [dbo].[Patente] ([PatenteID])
-GO
-ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([PatenteHijaID])
-REFERENCES [dbo].[Patente] ([PatenteID])
-GO
-ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([PatenteHijaID])
-REFERENCES [dbo].[Patente] ([PatenteID])
-GO
-ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([PatenteHijaID])
 REFERENCES [dbo].[Patente] ([PatenteID])
 GO
 ALTER TABLE [dbo].[PatenteJerarquia]  WITH CHECK ADD FOREIGN KEY([PatenteHijaID])
@@ -584,35 +521,8 @@ GO
 ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
 REFERENCES [dbo].[Habitacion] ([ID_habitacion])
 GO
-ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
-REFERENCES [dbo].[Habitacion] ([ID_habitacion])
-GO
-ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
-REFERENCES [dbo].[Habitacion] ([ID_habitacion])
-GO
-ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
-REFERENCES [dbo].[Habitacion] ([ID_habitacion])
-GO
 ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HuespedID])
 REFERENCES [dbo].[Huesped] ([HuespedID])
-GO
-ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HuespedID])
-REFERENCES [dbo].[Huesped] ([HuespedID])
-GO
-ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HuespedID])
-REFERENCES [dbo].[Huesped] ([HuespedID])
-GO
-ALTER TABLE [dbo].[Reserva]  WITH CHECK ADD FOREIGN KEY([HuespedID])
-REFERENCES [dbo].[Huesped] ([HuespedID])
-GO
-ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
-REFERENCES [dbo].[Habitacion] ([ID_habitacion])
-GO
-ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
-REFERENCES [dbo].[Habitacion] ([ID_habitacion])
-GO
-ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
-REFERENCES [dbo].[Habitacion] ([ID_habitacion])
 GO
 ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([HabitacionID])
 REFERENCES [dbo].[Habitacion] ([ID_habitacion])
@@ -620,47 +530,11 @@ GO
 ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([UsuarioAtendioID])
 REFERENCES [dbo].[Usuario] ([UsuarioID])
 GO
-ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([UsuarioAtendioID])
-REFERENCES [dbo].[Usuario] ([UsuarioID])
-GO
-ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([UsuarioAtendioID])
-REFERENCES [dbo].[Usuario] ([UsuarioID])
-GO
-ALTER TABLE [dbo].[ServicioLimpieza]  WITH CHECK ADD FOREIGN KEY([UsuarioAtendioID])
-REFERENCES [dbo].[Usuario] ([UsuarioID])
-GO
-ALTER TABLE [dbo].[SesionUsuario]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
-REFERENCES [dbo].[Usuario] ([UsuarioID])
-GO
-ALTER TABLE [dbo].[SesionUsuario]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
-REFERENCES [dbo].[Usuario] ([UsuarioID])
-GO
-ALTER TABLE [dbo].[SesionUsuario]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
-REFERENCES [dbo].[Usuario] ([UsuarioID])
-GO
 ALTER TABLE [dbo].[SesionUsuario]  WITH CHECK ADD FOREIGN KEY([UsuarioID])
 REFERENCES [dbo].[Usuario] ([UsuarioID])
 GO
 ALTER TABLE [dbo].[Traduccion]  WITH CHECK ADD FOREIGN KEY([IdiomaID])
 REFERENCES [dbo].[Idioma] ([IdiomaID])
-GO
-ALTER TABLE [dbo].[Traduccion]  WITH CHECK ADD FOREIGN KEY([IdiomaID])
-REFERENCES [dbo].[Idioma] ([IdiomaID])
-GO
-ALTER TABLE [dbo].[Traduccion]  WITH CHECK ADD FOREIGN KEY([IdiomaID])
-REFERENCES [dbo].[Idioma] ([IdiomaID])
-GO
-ALTER TABLE [dbo].[Traduccion]  WITH CHECK ADD FOREIGN KEY([IdiomaID])
-REFERENCES [dbo].[Idioma] ([IdiomaID])
-GO
-ALTER TABLE [dbo].[UsuarioPatente]  WITH CHECK ADD FOREIGN KEY([PatenteID])
-REFERENCES [dbo].[Patente] ([PatenteID])
-GO
-ALTER TABLE [dbo].[UsuarioPatente]  WITH CHECK ADD FOREIGN KEY([PatenteID])
-REFERENCES [dbo].[Patente] ([PatenteID])
-GO
-ALTER TABLE [dbo].[UsuarioPatente]  WITH CHECK ADD FOREIGN KEY([PatenteID])
-REFERENCES [dbo].[Patente] ([PatenteID])
 GO
 ALTER TABLE [dbo].[UsuarioPatente]  WITH CHECK ADD FOREIGN KEY([PatenteID])
 REFERENCES [dbo].[Patente] ([PatenteID])
@@ -1367,6 +1241,21 @@ BEGIN
     ALTER DATABASE StayEasyDB SET MULTI_USER;
 END;
 GO
+/****** Object:  StoredProcedure [dbo].[usp_Restore_StayEasyDB]    Script Date: 15/09/2026 10:11:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER PROCEDURE [dbo].[usp_Restore_StayEasyDB]
+    @RutaArchivo VARCHAR(260)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    ALTER DATABASE StayEasyDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    RESTORE DATABASE StayEasyDB FROM DISK = @RutaArchivo WITH REPLACE;
+    ALTER DATABASE StayEasyDB SET MULTI_USER;
+END;
+GO
 /****** Object:  StoredProcedure [dbo].[sp_ValidarEmail]    Script Date: 15/09/2026 10:11:37 ******/
 SET ANSI_NULLS ON
 GO
@@ -1376,10 +1265,11 @@ CREATE PROCEDURE [dbo].[sp_ValidarEmail]
     @Email NVARCHAR(255)
 AS
 BEGIN
-    -- Seleccionamos el ID o un 1 para hacerlo ligero, solo queremos saber si existe
+    SET NOCOUNT ON;
+    -- Seleccionamos 1 desde la tabla Usuario (singular) para validar existencia del correo
     SELECT 1 
-    FROM Usuarios 
-    WHERE Email = @Email
+    FROM dbo.Usuario 
+    WHERE Email = @Email;
 END
 GO
 /****** Reportes del Dashboard: ocupacion diaria e ingresos del mes ******/

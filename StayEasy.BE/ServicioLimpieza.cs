@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +6,11 @@ namespace StayEasy.BE
 {
     public class ServicioLimpieza
     {
+        public ServicioLimpieza()
+        {
+            Prioridad = "Normal";
+        }
+
         public int AlertaID { get; set; }
         public int HabitacionID { get; set; }
         public DateTime FechaHora { get; set; }

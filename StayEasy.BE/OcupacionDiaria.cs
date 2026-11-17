@@ -9,6 +9,8 @@ namespace StayEasy.BE
     /// </summary>
     public class OcupacionDiaria
     {
+        public OcupacionDiaria() { }
+
         public OcupacionDiaria(DateTime fecha, int ocupadas, int totales)
         {
             Fecha    = fecha;
